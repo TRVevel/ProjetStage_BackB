@@ -29,16 +29,16 @@ export async function getBookById(req:Request, res:Response){
     }
 }
 
-export async function getBooksByDepartment(req: Request, res: Response) {
+export async function getBooksBypostalCode(req: Request, res: Response) {
     try {
-      const { department } = req.params;
-      if (!department) {
+      const { postalCode } = req.params;
+      if (!postalCode) {
         res.status(400).json({ message: 'Département requis' });
         return;
       }
   
       // Trouver les utilisateurs dans ce département
-      const users = await UserSchema.find({ department: new RegExp(`^${department}$`, 'i') }).select('_id');
+      const users = await UserSchema.find({ postalCode: new RegExp(`^${postalCode}$`, 'i') }).select('_id');
       if (!users.length) {
         res.status(404).json({ message: 'Aucun utilisateur trouvé dans ce département' });
         return;
@@ -52,7 +52,7 @@ export async function getBooksByDepartment(req: Request, res: Response) {
         return;
       }
   
-      res.status(200).json({ message: `Livres dans le département ${department}`, data: books });
+      res.status(200).json({ message: `Livres dans le département ${postalCode}`, data: books });
     } catch (err: any) {
       res.status(500).json({ message: 'Erreur interne', error: err.message });
     }

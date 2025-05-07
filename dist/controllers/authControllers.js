@@ -22,7 +22,7 @@ const JWTUtils_1 = require("../utils/JWTUtils");
 function register(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { name, phone, address, department, email, password } = req.body;
+            const { name, phone, address, postalCode, email, password } = req.body;
             const missingFields = [];
             if (!name)
                 missingFields.push('name');
@@ -30,8 +30,8 @@ function register(req, res) {
                 missingFields.push('phone');
             if (!address)
                 missingFields.push('address');
-            if (!department)
-                missingFields.push('department');
+            if (!postalCode)
+                missingFields.push('postalCode');
             if (!email)
                 missingFields.push('email');
             if (!password)
@@ -43,7 +43,7 @@ function register(req, res) {
             // Hashage du mot de passe
             const hashedPassword = yield (0, pwdUtils_1.hashPassword)(password);
             // Créer un nouvel utilisateur
-            const newUser = new UserSchema_1.default({ name, phone, address, department, email, hashedPassword });
+            const newUser = new UserSchema_1.default({ name, phone, address, postalCode, email, hashedPassword });
             // Sauvegarde de l'utilisateur
             const savedUser = yield newUser.save();
             // Supprimer le mot de passe haché avant de renvoyer l'utilisateur

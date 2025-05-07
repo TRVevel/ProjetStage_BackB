@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllUsers = getAllUsers;
 exports.getUserById = getUserById;
-exports.getUserByNameOrEmailOrDepartment = getUserByNameOrEmailOrDepartment;
+exports.getUserByNameOrEmailOrpostalCode = getUserByNameOrEmailOrpostalCode;
 exports.updateUser = updateUser;
 exports.isActive = isActive;
 exports.deleteUser = deleteUser;
@@ -54,7 +54,7 @@ function getUserById(req, res) {
         }
     });
 }
-function getUserByNameOrEmailOrDepartment(req, res) {
+function getUserByNameOrEmailOrpostalCode(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             // Récupérer les paramètres de recherche depuis l'URL
@@ -71,7 +71,7 @@ function getUserByNameOrEmailOrDepartment(req, res) {
                     { firstName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le prénom
                     { lastName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom
                     { email: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur l'email
-                    { department: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
+                    { postalCode: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
                 ]
             });
             // Si aucun utilisateur trouvé

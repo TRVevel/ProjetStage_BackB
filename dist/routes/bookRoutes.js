@@ -63,18 +63,18 @@ router.get('/books', bookController_1.getAllBooks);
 router.get('/books/:bookId', bookController_1.getBookById);
 /**
  * @swagger
- * /api/books/department/{department}:
+ * /api/books/postalCode/{postalCode}:
  *   get:
  *     tags:
  *       - Books
- *     summary: "Get books by department"
+ *     summary: "Get books by postalCode"
  *     parameters:
  *       - in: path
- *         name: department
+ *         name: postalCode
  *         required: true
  *         schema:
  *           type: string
- *         description: "The department to filter books by"
+ *         description: "The postalCode to filter books by"
  *     responses:
  *       200:
  *         description: "Books retrieved successfully"
@@ -90,11 +90,11 @@ router.get('/books/:bookId', bookController_1.getBookById);
  *                   items:
  *                     $ref: '#/components/schemas/Book'
  *       404:
- *         description: "No books found for this department"
+ *         description: "No books found for this postalCode"
  *       500:
  *         description: "Internal server error"
  */
-router.get('/books/department/:department', bookController_1.getBooksByDepartment);
+router.get('/books/postalCode/:postalCode', bookController_1.getBooksBypostalCode);
 /**
  * @swagger
  * /api/books:

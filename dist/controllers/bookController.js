@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllBooks = getAllBooks;
 exports.getBookById = getBookById;
-exports.getBooksByDepartment = getBooksByDepartment;
+exports.getBooksBypostalCode = getBooksBypostalCode;
 exports.addBook = addBook;
 exports.changeActiveStatus = changeActiveStatus;
 exports.updateBook = updateBook;
@@ -53,16 +53,16 @@ function getBookById(req, res) {
         }
     });
 }
-function getBooksByDepartment(req, res) {
+function getBooksBypostalCode(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { department } = req.params;
-            if (!department) {
+            const { postalCode } = req.params;
+            if (!postalCode) {
                 res.status(400).json({ message: 'Département requis' });
                 return;
             }
             // Trouver les utilisateurs dans ce département
-            const users = yield UserSchema_1.default.find({ department: new RegExp(`^${department}$`, 'i') }).select('_id');
+            const users = yield UserSchema_1.default.find({ postalCode: new RegExp(`^${postalCode}$`, 'i') }).select('_id');
             if (!users.length) {
                 res.status(404).json({ message: 'Aucun utilisateur trouvé dans ce département' });
                 return;
@@ -74,7 +74,7 @@ function getBooksByDepartment(req, res) {
                 res.status(404).json({ message: 'Aucun livre trouvé pour ce département' });
                 return;
             }
-            res.status(200).json({ message: `Livres dans le département ${department}`, data: books });
+            res.status(200).json({ message: `Livres dans le département ${postalCode}`, data: books });
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });

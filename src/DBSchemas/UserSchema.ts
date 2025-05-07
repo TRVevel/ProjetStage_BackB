@@ -7,7 +7,8 @@ export interface IUser extends Document {
     name: string;
     phone: string;
     address: string;
-    department: string;
+    city: string;
+    postaCcode: string;
     email: string;
     booksOwned: string[];
     booksRead: string[];
@@ -22,7 +23,8 @@ const UserSchema: Schema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
     address: { type: String, required: true },
-    department: { type: String, required: true },
+    city: { type: String, required: true },
+    postalCode: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     booksOwned: { type: [mongoose.Schema.Types.ObjectId],
         ref: "Book",

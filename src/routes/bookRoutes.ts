@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addBook, changeActiveStatus, deleteBook, getAllBooks, getBookById, getBooksByDepartment, updateBook } from "../controllers/bookController";
+import { addBook, changeActiveStatus, deleteBook, getAllBooks, getBookById, getBooksBypostalCode, updateBook } from "../controllers/bookController";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 
 const router = Router();
@@ -65,18 +65,18 @@ router.get('/books/:bookId', getBookById);
 
 /**
  * @swagger
- * /api/books/department/{department}:
+ * /api/books/postalCode/{postalCode}:
  *   get:
  *     tags:
  *       - Books
- *     summary: "Get books by department"
+ *     summary: "Get books by postalCode"
  *     parameters:
  *       - in: path
- *         name: department
+ *         name: postalCode
  *         required: true
  *         schema:
  *           type: string
- *         description: "The department to filter books by"
+ *         description: "The postalCode to filter books by"
  *     responses:
  *       200:
  *         description: "Books retrieved successfully"
@@ -92,11 +92,11 @@ router.get('/books/:bookId', getBookById);
  *                   items:
  *                     $ref: '#/components/schemas/Book'
  *       404:
- *         description: "No books found for this department"
+ *         description: "No books found for this postalCode"
  *       500:
  *         description: "Internal server error"
  */
-router.get('/books/department/:department', getBooksByDepartment);
+router.get('/books/postalCode/:postalCode', getBooksBypostalCode);
 
 
 /**

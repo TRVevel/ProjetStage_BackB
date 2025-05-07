@@ -84,7 +84,7 @@ router.get('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, user
  *   get:
  *     tags:
  *       - Users
- *     summary: Récupérer un utilisateur par son Name ou Email ou Department
+ *     summary: Récupérer un utilisateur par son Name ou Email ou postalCode
  *     parameters:
  *       - in: path
  *         name: query
@@ -108,7 +108,7 @@ router.get('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, user
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserByNameOrEmailOrDepartment);
+router.get('/users/search/:query', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserByNameOrEmailOrpostalCode);
 /**
  * @swagger
  * /api/users/{userId}:

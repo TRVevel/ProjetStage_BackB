@@ -41,8 +41,9 @@ const BookSchema = new mongoose_1.Schema({
     genre: { type: String, required: true },
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
-    images: { type: [String], default: [] },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
+    state: { type: String, enum: ['new', 'good', 'used'], required: true },
+    images: { type: [String], default: [] },
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
         type: mongoose_1.default.Schema.Types.ObjectId,

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrDepartment, isActive, updateUser } from "../controllers/userControllers";
+import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrpostalCode, isActive, updateUser } from "../controllers/userControllers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 
 const router = Router();
@@ -86,7 +86,7 @@ router.get('/users/:userId', verifyTokenMiddleware, getUserById);
  *   get:
  *     tags:
  *       - Users
- *     summary: Récupérer un utilisateur par son Name ou Email ou Department
+ *     summary: Récupérer un utilisateur par son Name ou Email ou postalCode
  *     parameters:
  *       - in: path
  *         name: query
@@ -110,7 +110,7 @@ router.get('/users/:userId', verifyTokenMiddleware, getUserById);
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query',verifyTokenMiddleware, getUserByNameOrEmailOrDepartment);
+router.get('/users/search/:query',verifyTokenMiddleware, getUserByNameOrEmailOrpostalCode);
 
 /**
  * @swagger

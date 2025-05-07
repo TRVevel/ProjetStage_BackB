@@ -32,7 +32,7 @@ export async function getUserById(req:Request, res:Response){
     }
 }
 
-export async function getUserByNameOrEmailOrDepartment(req: Request, res: Response) {
+export async function getUserByNameOrEmailOrpostalCode(req: Request, res: Response) {
     try {
         // Récupérer les paramètres de recherche depuis l'URL
         const { query } = req.params;
@@ -50,7 +50,7 @@ export async function getUserByNameOrEmailOrDepartment(req: Request, res: Respon
                 { firstName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le prénom
                 { lastName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom
                 { email: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur l'email
-                { department: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
+                { postalCode: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
             ]
         });
 

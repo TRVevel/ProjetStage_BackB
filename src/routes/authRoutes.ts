@@ -21,7 +21,7 @@ const router = Router();
  *               - name
  *               - phone
  *               - address
- *               - department
+ *               - postalCode
  *               - email
  *               - password
  *             properties:
@@ -34,7 +34,7 @@ const router = Router();
  *               address:
  *                 type: string
  *                 example: "123 Rue Exemple, Paris"
- *               department:
+ *               postalCode:
  *                 type: string
  *                 example: "54"
  *               email:
