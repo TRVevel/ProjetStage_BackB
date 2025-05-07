@@ -2,29 +2,35 @@ import { Request, Response } from 'express';
 import { hashPassword, verifyPassword } from '../utils/pwdUtils';
 import UserSchema, { IUser } from '../DBSchemas/UserSchema';
 import { generateToken} from '../utils/JWTUtils';
+import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
 
 export async function register(req: Request, res: Response) {
     try {
-        const { name, phone, address, postalCode, email, password } = req.body;
+        
 
-        const missingFields = [];
-        if (!name) missingFields.push('name');
-        if (!phone) missingFields.push('phone');
-        if (!address) missingFields.push('address');
-        if (!postalCode) missingFields.push('postalCode');
-        if (!email) missingFields.push('email');
-        if (!password) missingFields.push('password');
+        // Validation des données d'entrée avec Joi
+        const { error } = userValidationSchema.validate(req.body);
+        
+        if (error) {
+            // Si la validation échoue, on retourne les erreurs
+           res.status(400).json({ message: 'Erreur de validation', details: error.details });
+           return ;
+        }
+        
+        const { name, phone, address,city, postalCode, email, password } = req.body;
 
-        if (missingFields.length > 0) {
-            res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
-            return;
+        // Vérifier si un client avec le même email existe déjà (gestion de duplication)
+        const existingUser = await UserSchema.findOne({ where: { email } });
+        if (existingUser) {
+            res.status(400).json({ message: 'Ce customer existe déjà !' });
+            return ;
         }
 
         // Hashage du mot de passe
         const hashedPassword = await hashPassword(password);
 
         // Créer un nouvel utilisateur
-        const newUser: IUser = new UserSchema({ name, phone, address, postalCode, email, hashedPassword });
+        const newUser: IUser = new UserSchema({ name, phone, address, city, postalCode, email, hashedPassword });
 
         // Sauvegarde de l'utilisateur
         const savedUser = await newUser.save();
@@ -45,16 +51,15 @@ export async function register(req: Request, res: Response) {
 
 export async function login(req: Request, res: Response) {
     try {
-        const { email, password } = req.body;
 
-        const missingFields = [];
-        if (!email) missingFields.push('email');
-        if (!password) missingFields.push('password');
-
-        if (missingFields.length > 0) {
-            res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
+        // Validation des données
+        const { error } = userLoginValidationSchema.validate(req.body);
+        if (error) {
+            res.status(400).json({ message: "Erreur de validation", details: error.details });
             return;
         }
+
+        const { email, password } = req.body;
 
         const user = await UserSchema.findOne({ email });
         if (!user) {
