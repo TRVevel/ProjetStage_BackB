@@ -6,24 +6,19 @@ import { userLoginValidationSchema, userValidationSchema } from '../JoiValidator
 
 export async function register(req: Request, res: Response) {
     try {
-        
+        const { name, phone, address, postalCode, email, password } = req.body;
 
-        // Validation des données d'entrée avec Joi
-        const { error } = userValidationSchema.validate(req.body);
-        
-        if (error) {
-            // Si la validation échoue, on retourne les erreurs
-           res.status(400).json({ message: 'Erreur de validation', details: error.details });
-           return ;
-        }
-        
-        const { name, phone, address, city, postalCode, email, password } = req.body;
+        const missingFields = [];
+        if (!name) missingFields.push('name');
+        if (!phone) missingFields.push('phone');
+        if (!address) missingFields.push('address');
+        if (!postalCode) missingFields.push('postalCode');
+        if (!email) missingFields.push('email');
+        if (!password) missingFields.push('password');
 
-        // Vérifier si un client avec le même email existe déjà (gestion de duplication)
-        const existingUser = await UserSchema.findOne({ where: { email } });
-        if (existingUser) {
-            res.status(400).json({ message: 'Ce customer existe déjà !' });
-            return ;
+        if (missingFields.length > 0) {
+            res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
+            return;
         }
 
         // Hashage du mot de passe

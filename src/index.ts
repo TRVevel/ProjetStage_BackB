@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import loanRoutes from "./routes/loanRoutes";
+import eventRoutes from "./routes/eventRoutes";
 
 
 const app = express();
@@ -35,6 +36,7 @@ const connectDB = async () => {
     app.use('/api', userRoutes);
     app.use('/api', bookRoutes);
     app.use('/api', loanRoutes);
+    app.use('/api', eventRoutes)
     
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

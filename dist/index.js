@@ -21,6 +21,7 @@ const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const bookRoutes_1 = __importDefault(require("./routes/bookRoutes"));
 const loanRoutes_1 = __importDefault(require("./routes/loanRoutes"));
+const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
@@ -47,6 +48,7 @@ app.use('/api/auth', authRoutes_1.default);
 app.use('/api', userRoutes_1.default);
 app.use('/api', bookRoutes_1.default);
 app.use('/api', loanRoutes_1.default);
+app.use('/api', eventRoutes_1.default);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
 app.listen(3000, () => {
     console.log('Server is running on port :', PORT);
