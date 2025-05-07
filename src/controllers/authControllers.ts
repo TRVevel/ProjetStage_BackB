@@ -6,7 +6,25 @@ import { userLoginValidationSchema, userValidationSchema } from '../JoiValidator
 
 export async function register(req: Request, res: Response) {
     try {
+
+        // Validation des données d'entrée avec Joi
+        const { error } = userValidationSchema.validate(req.body);
+        
+        if (error) {
+            // Si la validation échoue, on retourne les erreurs
+           res.status(400).json({ message: 'Erreur de validation', details: error.details });
+           return ;
+        }
+
+        
         const { name, phone, address, city, postalCode, email, password } = req.body;
+        
+        // Vérifier si un client avec le même email existjà (gestion de duplication)
+        const existingCustomer = await UserSchema.findOne({ where: { email } });
+        if (existingCustomer) {
+            res.status(400).json({ message: 'Ce customer existe déjà !' });
+            return ;
+        }
 
         // Hashage du mot de passe
         const hashedPassword = await hashPassword(password);

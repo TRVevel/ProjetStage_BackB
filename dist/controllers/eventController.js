@@ -44,8 +44,8 @@ function getEventById(req, res) {
 function createEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { title, description, images, creator, language } = req.body;
-            if (!title || !description || !creator || !language) {
+            const { title, description, images, language } = req.body;
+            if (!title || !description || !language) {
                 res.status(400).json({ message: "Champs manquant" });
                 return;
             }
@@ -53,7 +53,6 @@ function createEvent(req, res) {
                 title,
                 description,
                 images,
-                creator,
                 language,
             });
             res.status(201).json({ message: "Événement créé", data: event });

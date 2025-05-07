@@ -31,9 +31,9 @@ function register(req, res) {
                 return;
             }
             const { name, phone, address, city, postalCode, email, password } = req.body;
-            // Vérifier si un client avec le même email existe déjà (gestion de duplication)
-            const existingUser = yield UserSchema_1.default.findOne({ where: { email } });
-            if (existingUser) {
+            // Vérifier si un client avec le même email existjà (gestion de duplication)
+            const existingCustomer = yield UserSchema_1.default.findOne({ where: { email } });
+            if (existingCustomer) {
                 res.status(400).json({ message: 'Ce customer existe déjà !' });
                 return;
             }
