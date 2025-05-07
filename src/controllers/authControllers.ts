@@ -17,7 +17,7 @@ export async function register(req: Request, res: Response) {
            return ;
         }
         
-        const { name, phone, address,city, postalCode, email, password } = req.body;
+        const { name, phone, address, city, postalCode, email, password } = req.body;
 
         // Vérifier si un client avec le même email existe déjà (gestion de duplication)
         const existingUser = await UserSchema.findOne({ where: { email } });
