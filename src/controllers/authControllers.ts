@@ -5,12 +5,13 @@ import { generateToken} from '../utils/JWTUtils';
 
 export async function register(req: Request, res: Response) {
     try {
-        const { name, phone, address, postalCode, email, password } = req.body;
+        const { name, phone, address, city, postalCode, email, password } = req.body;
 
         const missingFields = [];
         if (!name) missingFields.push('name');
         if (!phone) missingFields.push('phone');
         if (!address) missingFields.push('address');
+        if (!city) missingFields.push('city');
         if (!postalCode) missingFields.push('postalCode');
         if (!email) missingFields.push('email');
         if (!password) missingFields.push('password');
@@ -24,7 +25,7 @@ export async function register(req: Request, res: Response) {
         const hashedPassword = await hashPassword(password);
 
         // Créer un nouvel utilisateur
-        const newUser: IUser = new UserSchema({ name, phone, address, postalCode, email, hashedPassword });
+        const newUser: IUser = new UserSchema({ name, phone, address, city, postalCode, email, hashedPassword });
 
         // Sauvegarde de l'utilisateur
         const savedUser = await newUser.save();

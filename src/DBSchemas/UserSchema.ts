@@ -8,7 +8,7 @@ export interface IUser extends Document {
     phone: string;
     address: string;
     city: string;
-    postaCcode: string;
+    postalCode: string;
     email: string;
     booksOwned: string[];
     booksRead: string[];
