@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { hashPassword, verifyPassword } from '../utils/pwdUtils';
 import UserSchema, { IUser } from '../DBSchemas/UserSchema';
 import { generateToken} from '../utils/JWTUtils';
-import { JwtPayload } from 'jsonwebtoken';
 
 export async function register(req: Request, res: Response) {
     try {

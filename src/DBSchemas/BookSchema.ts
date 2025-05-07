@@ -8,6 +8,7 @@ export interface IBook extends Document {
     author: string;
     publishedYear: number;
     language: "french" | "ukrainian" | "english";
+    state: "new"| "good" | "used"; // État du livre (neuf, bon état, usé, etc.)
     images: string[];
     readBy: string[]; // Tableau d'IDs de livres lus
     owner: string;
@@ -23,8 +24,9 @@ const BookSchema: Schema = new Schema({
     genre: { type: String, required: true },
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
-    images: { type: [String], default: [] },
     language: { type: String,enum: ['french', 'ukrainian', 'english'], required: true},
+    state: { type: String,enum: ['new', 'good', 'used'], required: true},
+    images: { type: [String], default: [] },
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
         type: mongoose.Schema.Types.ObjectId,

@@ -7,6 +7,7 @@ export interface ILoan extends Document {
     startDate: Date; // Date de début de l'emprunt
     endDate: Date; // Date de fin de l'emprunt
     status: 'pending' | 'approved' | 'returned'; // Statut de l'emprunt
+    returnImages: string[]; // Images du livre emprunté
     returnedAt: Date | null; // Date de retour du livre, null si pas encore retourné
     addedAt: Date;
 }
@@ -26,6 +27,7 @@ const LoanSchema: Schema = new Schema({
     startDate: { type: Date, required: true }, // Date de début de l'emprunt
     endDate: { type: Date, required: true }, // Date de fin de l'emprunt
     status: { type: String, enum: ['pending', 'approved', 'returned'], default: 'pending' }, // Statut de l'emprunt
+    returnImages: { type: [String], default: [] }, // Images du livre emprunté
     returnedAt: { type: Date, default: null }, // Date de retour du livre, null si pas encore retourné
     addedAt: { type: Date, default: Date.now } // Date d'ajout par défaut à l'instant présent
 });
