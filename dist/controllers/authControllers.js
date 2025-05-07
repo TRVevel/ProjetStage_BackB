@@ -19,31 +19,28 @@ exports.passwordChange = passwordChange;
 const pwdUtils_1 = require("../utils/pwdUtils");
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const JWTUtils_1 = require("../utils/JWTUtils");
+const authValidators_1 = require("../JoiValidators/authValidators");
 function register(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { name, phone, address, postalCode, email, password } = req.body;
-            const missingFields = [];
-            if (!name)
-                missingFields.push('name');
-            if (!phone)
-                missingFields.push('phone');
-            if (!address)
-                missingFields.push('address');
-            if (!postalCode)
-                missingFields.push('postalCode');
-            if (!email)
-                missingFields.push('email');
-            if (!password)
-                missingFields.push('password');
-            if (missingFields.length > 0) {
-                res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
+            // Validation des données d'entrée avec Joi
+            const { error } = authValidators_1.userValidationSchema.validate(req.body);
+            if (error) {
+                // Si la validation échoue, on retourne les erreurs
+                res.status(400).json({ message: 'Erreur de validation', details: error.details });
+                return;
+            }
+            const { name, phone, address, city, postalCode, email, password } = req.body;
+            // Vérifier si un client avec le même email existe déjà (gestion de duplication)
+            const existingUser = yield UserSchema_1.default.findOne({ where: { email } });
+            if (existingUser) {
+                res.status(400).json({ message: 'Ce customer existe déjà !' });
                 return;
             }
             // Hashage du mot de passe
             const hashedPassword = yield (0, pwdUtils_1.hashPassword)(password);
             // Créer un nouvel utilisateur
-            const newUser = new UserSchema_1.default({ name, phone, address, postalCode, email, hashedPassword });
+            const newUser = new UserSchema_1.default({ name, phone, address, city, postalCode, email, hashedPassword });
             // Sauvegarde de l'utilisateur
             const savedUser = yield newUser.save();
             // Supprimer le mot de passe haché avant de renvoyer l'utilisateur
@@ -62,16 +59,13 @@ function register(req, res) {
 function login(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { email, password } = req.body;
-            const missingFields = [];
-            if (!email)
-                missingFields.push('email');
-            if (!password)
-                missingFields.push('password');
-            if (missingFields.length > 0) {
-                res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
+            // Validation des données
+            const { error } = authValidators_1.userLoginValidationSchema.validate(req.body);
+            if (error) {
+                res.status(400).json({ message: "Erreur de validation", details: error.details });
                 return;
             }
+            const { email, password } = req.body;
             const user = yield UserSchema_1.default.findOne({ email });
             if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });

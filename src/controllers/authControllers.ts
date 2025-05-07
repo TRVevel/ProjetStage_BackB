@@ -6,20 +6,7 @@ import { userLoginValidationSchema, userValidationSchema } from '../JoiValidator
 
 export async function register(req: Request, res: Response) {
     try {
-        const { name, phone, address, postalCode, email, password } = req.body;
-
-        const missingFields = [];
-        if (!name) missingFields.push('name');
-        if (!phone) missingFields.push('phone');
-        if (!address) missingFields.push('address');
-        if (!postalCode) missingFields.push('postalCode');
-        if (!email) missingFields.push('email');
-        if (!password) missingFields.push('password');
-
-        if (missingFields.length > 0) {
-            res.status(400).json({ message: `Champs manquants: ${missingFields.join(', ')}` });
-            return;
-        }
+        const { name, phone, address, city, postalCode, email, password } = req.body;
 
         // Hashage du mot de passe
         const hashedPassword = await hashPassword(password);
