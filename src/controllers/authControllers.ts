@@ -3,7 +3,6 @@ import { hashPassword, verifyPassword } from '../utils/pwdUtils';
 import UserSchema, { IUser } from '../DBSchemas/UserSchema';
 import { generateToken} from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
-import { bookSchema } from '../JoiValidators/bookValidators';
 import BookSchema from '../DBSchemas/BookSchema';
 
 export async function register(req: Request, res: Response) {
