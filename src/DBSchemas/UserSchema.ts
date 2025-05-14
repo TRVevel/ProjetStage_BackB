@@ -21,7 +21,7 @@ export interface IUser extends Document {
 const UserSchema: Schema = new Schema({
     admin: { type: Boolean, default: false }, // Par défaut, l'utilisateur n'est pas admin
     name: { type: String, required: true },
-    phone: { type: String, required: true },
+    phone: { type: String, required: false },
     address: { type: String, required: true },
     city: { type: String, required: true },
     postalCode: { type: String, required: true },
