@@ -32,7 +32,7 @@ export async function getUserById(req:Request, res:Response){
     }
 }
 
-export async function getUserByNameOrEmailOrpostalCode(req: Request, res: Response) {
+export async function getUserByNameOrEmailOrPostalCode(req: Request, res: Response) {
     try {
         // Récupérer les paramètres de recherche depuis l'URL
         const { query } = req.params;
