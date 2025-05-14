@@ -1,13 +1,13 @@
 import {Router} from "express";
 import { createEvent, getEventById, getAllEvents, updateEvent, deleteEvent } from "../controllers/eventController";
-import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
+import { isAdmin } from "../middlewares/verifyIsAdmin";
 
 const router = Router();
 
-router.get('/events', verifyTokenMiddleware, getAllEvents);
-router.get('/events/:eventId', verifyTokenMiddleware, getEventById);
-router.post('/events', verifyTokenMiddleware, createEvent);
-router.put('/events/:eventId', verifyTokenMiddleware, updateEvent);
-router.delete('/events/:eventId', verifyTokenMiddleware, deleteEvent);
+router.get('/events', getAllEvents);
+router.get('/events/:eventId', getEventById);
+router.post('/events', isAdmin, createEvent);
+router.put('/events/:eventId', isAdmin, updateEvent);
+router.delete('/events/:eventId', isAdmin, deleteEvent);
 
 export default router;

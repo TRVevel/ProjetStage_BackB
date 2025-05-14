@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { addBook, changeActiveStatus, deleteBook, getAllBooks, getAllBooksByActiveAndOwnerActive, getBookById, getBooksBypostalCode, updateBook } from "../controllers/bookController";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
+import { isAdmin } from "../middlewares/verifyIsAdmin";
 
 const router = Router();
 
@@ -28,7 +29,7 @@ const router = Router();
  *       500:
  *         description: "Internal server error"
  */
-router.get('/books', getAllBooks);
+router.get('/books', isAdmin, getAllBooks);
 
 /**
  * @swagger

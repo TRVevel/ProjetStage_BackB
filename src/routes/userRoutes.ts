@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrPostalCode, isActive, updateUser } from "../controllers/userControllers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
+import { isAdmin } from "../middlewares/verifyIsAdmin";
 
 const router = Router();
 
@@ -28,7 +29,7 @@ const router = Router();
  *       500:
  *         description: Erreur interne
  */
-router.get('/users',verifyTokenMiddleware, getAllUsers);
+router.get('/users', isAdmin, getAllUsers);
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ router.get('/users',verifyTokenMiddleware, getAllUsers);
  *                   type: string
  *                   example: Erreur interne
  */
-router.get('/users/:userId', verifyTokenMiddleware, getUserById);
+router.get('/users/:userId', isAdmin, getUserById);
 
 /**
  * @swagger
@@ -110,7 +111,7 @@ router.get('/users/:userId', verifyTokenMiddleware, getUserById);
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query',verifyTokenMiddleware, getUserByNameOrEmailOrPostalCode);
+router.get('/users/search/:query',isAdmin, getUserByNameOrEmailOrPostalCode);
 
 /**
  * @swagger
@@ -255,7 +256,7 @@ router.put('/users/:userId', verifyTokenMiddleware, updateUser);
  *                   type: string
  *                   example: Erreur interne
  */
-router.put('/users/:userId/active', verifyTokenMiddleware, isActive);
+router.put('/users/:userId/active', isAdmin, isActive);
 
 /**
  * @swagger

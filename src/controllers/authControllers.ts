@@ -82,7 +82,7 @@ export async function login(req: Request, res: Response) {
             await book.save();
         }
         // Générer un token avec les informations de l'utilisateur
-        const token = generateToken({ _id: user._id, email: user.email });
+        const token = generateToken({ _id: user._id, email: user.email, admin: user.admin });
 
         // Stocker le token dans un cookie
         res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
@@ -93,6 +93,7 @@ export async function login(req: Request, res: Response) {
             data: {
                 userId: user._id,
                 email: user.email,
+                admin: user.admin,
                 userActivity: user.isActive
             }
         });
@@ -102,16 +103,6 @@ export async function login(req: Request, res: Response) {
     }
 }
 
-
-/**
- * Fonction pour décoder le JWT
- * @param token
- */
-function decodeToken(token: string) {
-    // Utilise une bibliothèque comme jwt-simple ou jsonwebtoken pour décoder le token
-    const jwt = require('jsonwebtoken');
-    return jwt.decode(token); // Décoder le token sans vérifier la signature
-}
 
 export async function logout(req: Request, res: Response) {
     try {

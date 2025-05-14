@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { addLoan, bookReturned, cancelLoan, confirmLoan, getAllLoans, updateLoan } from "../controllers/loanConttrolers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
+import { isAdmin } from "../middlewares/verifyIsAdmin";
 
 const router = Router();
 
@@ -51,7 +52,7 @@ const router = Router();
  *                   type: string
  *                   example: [description de l'erreur]
  */
-router.get('/loans', getAllLoans);
+router.get('/loans',isAdmin, getAllLoans);
 
 /**
  * @swagger
