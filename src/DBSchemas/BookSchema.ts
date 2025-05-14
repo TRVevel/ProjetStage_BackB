@@ -13,6 +13,7 @@ export interface IBook extends Document {
     readBy: string[]; // Tableau d'IDs de livres lus
     owner: string;
     isActive: boolean;
+    ownerActive: boolean; // Indique si le propriétaire du livre est actif ou non
     alreadyLoaned: boolean; // Indique si le livre est déjà emprunté
     addedAt: Date;
 }
@@ -25,7 +26,7 @@ const BookSchema: Schema = new Schema({
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
     language: { type: String,enum: ['french', 'ukrainian', 'english'], required: true},
-    state: { type: String,enum: ['new', 'good', 'used'], required: true},
+    state: { type: String,enum: ['new', 'good', 'used'], required: false},
     images: { type: [String], default: [] },
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
@@ -34,6 +35,7 @@ const BookSchema: Schema = new Schema({
         required: true
       }, // ID de l'utilisateur qui possède le livre
     isActive: { type: Boolean, default: true }, // Indique si le livre est actif ou non
+    ownerActive: { type: Boolean, default: true }, // Indique si le propriétaire du livre est actif ou non
     alreadyLoaned: { type: Boolean, default: false }, // Indique si le livre est déjà emprunté
     addedAt: { type: Date, default: Date.now } // Date d'ajout par défaut à l'instant présent   
 });

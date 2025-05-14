@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addBook, changeActiveStatus, deleteBook, getAllBooks, getBookById, getBooksBypostalCode, updateBook } from "../controllers/bookController";
+import { addBook, changeActiveStatus, deleteBook, getAllBooks, getAllBooksByActiveAndOwnerActive, getBookById, getBooksBypostalCode, updateBook } from "../controllers/bookController";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 
 const router = Router();
@@ -29,6 +29,31 @@ const router = Router();
  *         description: "Internal server error"
  */
 router.get('/books', getAllBooks);
+
+/**
+ * @swagger
+ * /api/books/active:
+ *   get:
+ *     tags:
+ *       - Books
+ *     summary: "Get all active books"
+ *     responses:
+ *       200:
+ *         description: "List of all active books"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Book'
+ */
+
+router.get('/books/active', getAllBooksByActiveAndOwnerActive);
 
 /**
 * @swagger

@@ -3,6 +3,8 @@ import { hashPassword, verifyPassword } from '../utils/pwdUtils';
 import UserSchema, { IUser } from '../DBSchemas/UserSchema';
 import { generateToken} from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
+import { bookSchema } from '../JoiValidators/bookValidators';
+import BookSchema from '../DBSchemas/BookSchema';
 
 export async function register(req: Request, res: Response) {
     try {
@@ -72,18 +74,27 @@ export async function login(req: Request, res: Response) {
             res.status(401).json({ message: 'Mot de passe incorrect' });
             return;
         }
+        user.isActive = true;
+        user.lastLogin = new Date();
+        const userBooks = await BookSchema.find({ owner: user._id });
 
+        for (const book of userBooks) {
+            book.ownerActive = true;
+            await book.save();
+        }
         // Générer un token avec les informations de l'utilisateur
         const token = generateToken({ _id: user._id, email: user.email });
 
         // Stocker le token dans un cookie
         res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
 
+        await user.save();
         res.status(200).json({
             message: 'Connexion réussie',
             data: {
                 userId: user._id,
-                email: user.email
+                email: user.email,
+                userActivity: user.isActive
             }
         });
 

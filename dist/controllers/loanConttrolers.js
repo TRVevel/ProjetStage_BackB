@@ -47,6 +47,9 @@ function addLoan(req, res) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
+            // chercher si un loan avec 
+            // le meme user et pour le meme livre 
+            // n'est pas deja en pending ou confirm
             const newLoan = new LoanSchema_1.default({ bookId, userId, startDate, endDate });
             const savedLoan = yield newLoan.save();
             res.status(201).json({ message: 'Emprunt ajouté avec succès', data: savedLoan });

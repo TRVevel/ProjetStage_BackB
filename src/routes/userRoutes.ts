@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrpostalCode, isActive, updateUser } from "../controllers/userControllers";
+import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrPostalCode, isActive, updateUser } from "../controllers/userControllers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 
 const router = Router();
@@ -110,7 +110,7 @@ router.get('/users/:userId', verifyTokenMiddleware, getUserById);
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query',verifyTokenMiddleware, getUserByNameOrEmailOrpostalCode);
+router.get('/users/search/:query',verifyTokenMiddleware, getUserByNameOrEmailOrPostalCode);
 
 /**
  * @swagger
@@ -304,5 +304,6 @@ router.put('/users/:userId/active', verifyTokenMiddleware, isActive);
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware, deleteUser);
+
 
 export default router;

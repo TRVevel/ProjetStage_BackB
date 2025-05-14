@@ -42,7 +42,7 @@ const BookSchema = new mongoose_1.Schema({
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
-    state: { type: String, enum: ['new', 'good', 'used'], required: true },
+    state: { type: String, enum: ['new', 'good', 'used'], required: false },
     images: { type: [String], default: [] },
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
@@ -51,6 +51,7 @@ const BookSchema = new mongoose_1.Schema({
         required: true
     }, // ID de l'utilisateur qui possède le livre
     isActive: { type: Boolean, default: true }, // Indique si le livre est actif ou non
+    ownerActive: { type: Boolean, default: true }, // Indique si le propriétaire du livre est actif ou non
     alreadyLoaned: { type: Boolean, default: false }, // Indique si le livre est déjà emprunté
     addedAt: { type: Date, default: Date.now } // Date d'ajout par défaut à l'instant présent   
 });

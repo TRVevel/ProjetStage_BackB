@@ -22,6 +22,7 @@ const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const bookRoutes_1 = __importDefault(require("./routes/bookRoutes"));
 const loanRoutes_1 = __importDefault(require("./routes/loanRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
+const activityCron_1 = require("./cron/activityCron");
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
@@ -31,7 +32,16 @@ app.use(express_1.default.json());
 // Connecter MongoDB
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.MONGO_URI);
+        yield mongoose_1.default
+            .connect(process.env.MONGO_URI)
+            .then(() => {
+            console.log("✅ Connecté à MongoDB");
+            // Démarrer le cron **après** la connexion réussie
+            (0, activityCron_1.startUserActivityCron)();
+        })
+            .catch((err) => {
+            console.error("❌ Erreur de connexion MongoDB :", err);
+        });
         console.log('MongoDB connecté avec succès');
     }
     catch (err) {

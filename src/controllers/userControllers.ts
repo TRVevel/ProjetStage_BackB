@@ -158,3 +158,5 @@ export async function deleteUser(req: Request, res: Response) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
+
+

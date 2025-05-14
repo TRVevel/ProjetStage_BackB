@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
+import { startUserActivityCron } from "./cron/activityCron";
 
 
 const app = express();
@@ -20,13 +21,24 @@ app.use(express.json());
 // Connecter MongoDB
 const connectDB = async () => {
     try {
-    await mongoose.connect(process.env.MONGO_URI as string);
+        await mongoose
+  .connect(process.env.MONGO_URI as string, )
+  .then(() => {
+    console.log("✅ Connecté à MongoDB");
+
+    // Démarrer le cron **après** la connexion réussie
+    startUserActivityCron();
+  })
+  .catch((err) => {
+    console.error("❌ Erreur de connexion MongoDB :", err);
+  });
     console.log('MongoDB connecté avec succès');
     } catch (err) {
     console.error('Erreur lors de la connexion à MongoDB:', err);
     process.exit(1);
     }
     };
+
     connectDB();
     app.get('/api-docs.json', (req, res) => {
         res.setHeader('Content-Type', 'application/json');

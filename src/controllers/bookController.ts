@@ -11,6 +11,17 @@ export async function getAllBooks(req:Request, res:Response){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
 }
+export async function getAllBooksByActiveAndOwnerActive(req:Request, res:Response){
+
+    try{ 
+        const books = await BookSchema.find({isActive: true, ownerActive: true});
+
+    res.status(200).json({message: 'Liste des livres', data: books});
+    }catch(err:any){
+        res.status(500).json({message: 'Erreur interne', error: err.message});
+    }
+}
+    
 export async function getBookById(req:Request, res:Response){
     try{
         const {bookId}= req.params;

@@ -30,6 +30,29 @@ const router = (0, express_1.Router)();
  */
 router.get('/books', bookController_1.getAllBooks);
 /**
+ * @swagger
+ * /api/books/active:
+ *   get:
+ *     tags:
+ *       - Books
+ *     summary: "Get all active books"
+ *     responses:
+ *       200:
+ *         description: "List of all active books"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Book'
+ */
+router.get('/books/active', bookController_1.getAllBooksByActiveAndOwnerActive);
+/**
 * @swagger
 * /api/books/{bookId}:
 *   get:

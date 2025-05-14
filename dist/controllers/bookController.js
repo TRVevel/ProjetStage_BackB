@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllBooks = getAllBooks;
+exports.getAllBooksByActiveAndOwnerActive = getAllBooksByActiveAndOwnerActive;
 exports.getBookById = getBookById;
 exports.getBooksBypostalCode = getBooksBypostalCode;
 exports.addBook = addBook;
@@ -26,6 +27,17 @@ function getAllBooks(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const books = yield BookSchema_1.default.find();
+            res.status(200).json({ message: 'Liste des livres', data: books });
+        }
+        catch (err) {
+            res.status(500).json({ message: 'Erreur interne', error: err.message });
+        }
+    });
+}
+function getAllBooksByActiveAndOwnerActive(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const books = yield BookSchema_1.default.find({ isActive: true, ownerActive: true });
             res.status(200).json({ message: 'Liste des livres', data: books });
         }
         catch (err) {

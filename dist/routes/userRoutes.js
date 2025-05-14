@@ -108,7 +108,7 @@ router.get('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, user
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserByNameOrEmailOrpostalCode);
+router.get('/users/search/:query', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserByNameOrEmailOrPostalCode);
 /**
  * @swagger
  * /api/users/{userId}:
@@ -299,4 +299,5 @@ router.put('/users/:userId/active', verifyTokenMiddleware_1.verifyTokenMiddlewar
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.deleteUser);
+router.get('/users/test', userControllers_1.verifyActivity);
 exports.default = router;

@@ -20,6 +20,7 @@ const pwdUtils_1 = require("../utils/pwdUtils");
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const JWTUtils_1 = require("../utils/JWTUtils");
 const authValidators_1 = require("../JoiValidators/authValidators");
+const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
 function register(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -76,15 +77,24 @@ function login(req, res) {
                 res.status(401).json({ message: 'Mot de passe incorrect' });
                 return;
             }
+            user.isActive = true;
+            user.lastLogin = new Date();
+            const userBooks = yield BookSchema_1.default.find({ owner: user._id });
+            for (const book of userBooks) {
+                book.ownerActive = true;
+                yield book.save();
+            }
             // Générer un token avec les informations de l'utilisateur
             const token = (0, JWTUtils_1.generateToken)({ _id: user._id, email: user.email });
             // Stocker le token dans un cookie
             res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
+            yield user.save();
             res.status(200).json({
                 message: 'Connexion réussie',
                 data: {
                     userId: user._id,
-                    email: user.email
+                    email: user.email,
+                    userActivity: user.isActive
                 }
             });
         }

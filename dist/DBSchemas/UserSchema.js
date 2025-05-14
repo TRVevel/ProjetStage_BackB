@@ -38,7 +38,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const UserSchema = new mongoose_1.Schema({
     admin: { type: Boolean, default: false }, // Par défaut, l'utilisateur n'est pas admin
     name: { type: String, required: true },
-    phone: { type: String, required: true },
+    phone: { type: String, required: false },
     address: { type: String, required: true },
     city: { type: String, required: true },
     postalCode: { type: String, required: true },
@@ -53,6 +53,7 @@ const UserSchema = new mongoose_1.Schema({
     }, // Tableau d'IDs de livres lus
     hashedPassword: { type: String, required: true },
     isActive: { type: Boolean, default: true }, // Par défaut, l'utilisateur est actif
+    lastLogin: { type: Date, default: null }, // Date de la dernière connexion
     addedAt: { type: Date, default: Date.now } // Date d'ajout par défaut à l'instant présent
 });
 // Exporter le modèle

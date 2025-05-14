@@ -14,6 +14,7 @@ export interface IUser extends Document {
     booksRead: string[];
     hashedPassword: string;
     isActive: boolean;
+    lastLogin: Date | null; // Date de la dernière connexion
     addedAt: Date;
 }
 
@@ -36,6 +37,7 @@ const UserSchema: Schema = new Schema({
         }, // Tableau d'IDs de livres lus
     hashedPassword: { type: String, required: true },
     isActive: { type: Boolean, default: true }, // Par défaut, l'utilisateur est actif
+    lastLogin: { type: Date, default: null }, // Date de la dernière connexion
     addedAt: { type: Date, default: Date.now } // Date d'ajout par défaut à l'instant présent
 });
 

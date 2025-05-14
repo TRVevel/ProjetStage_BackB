@@ -39,6 +39,9 @@ const EventSchema = new mongoose_1.Schema({
     description: { type: String, required: true },
     images: { type: [String], default: [] },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
+    usersInEvent: { type: [String], default: [] },
+    eventStartDate: { type: Date, required: true },
+    eventEndDate: { type: Date, required: true },
     addedAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now },
 });
