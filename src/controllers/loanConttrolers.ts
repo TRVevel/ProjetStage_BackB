@@ -28,6 +28,10 @@ export async function addLoan(req:Request, res:Response){
             res.status(400).json({message: 'Champs manquant'});
             return 
         }
+        // chercher si un loan avec 
+        // le meme user et pour le meme livre 
+        // n'est pas deja en pending ou confirm
+
         const newLoan= new LoanSchema({bookId, userId, startDate, endDate});
         const savedLoan= await newLoan.save();
         

@@ -22,8 +22,8 @@ export async function getEventById(req: Request, res: Response) {
 
 export async function createEvent(req: Request, res: Response) {
     try {
-        const { title, description, images, language } = req.body;
-        if (!title || !description  || !language) {
+        const { title, description, images, language, eventStartDate, eventEndDate } = req.body;
+        if (!title || !description  || !language || !eventStartDate || !eventEndDate) {
             res.status(400).json({ message: "Champs manquant" });
             return;
         }
@@ -32,6 +32,8 @@ export async function createEvent(req: Request, res: Response) {
             description,
             images,
             language,
+            eventStartDate,
+            eventEndDate,
         });
         res.status(201).json({ message: "Événement créé", data: event });
     } catch (err: any) {
@@ -42,8 +44,8 @@ export async function createEvent(req: Request, res: Response) {
 export async function updateEvent(req: Request, res: Response) {
     try {
         const { eventId } = req.params;
-        const { title, description, images, creator, language, usersInEvent } = req.body;
-        if (!eventId || !title || !description || !creator || !language || !usersInEvent) {
+        const { title, description, images, creator, language, usersInEvent, eventStartDate, eventEndDate } = req.body;
+        if (!eventId || !title || !description || !creator || !language || !usersInEvent || !eventStartDate || !eventEndDate) {
             res.status(400).json({ message: "Champs manquant" });
             return;
         }
@@ -54,6 +56,8 @@ export async function updateEvent(req: Request, res: Response) {
             creator,
             language,
             usersInEvent: [],
+            eventStartDate,
+            eventEndDate,
         });
         res.status(200).json({ message: "Événement mis à jour", data: event });
     } catch (err: any) {
