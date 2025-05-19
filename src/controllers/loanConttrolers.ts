@@ -15,7 +15,7 @@ export async function getAllLoans(req:Request, res:Response){
 export async function addLoan(req:Request, res:Response){
     try{
         const {bookId}= req.params;
-        const { startDate, endDate, isAutonomous}= req.body;
+        const { startDate, endDate}= req.body;
 
         const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
                 if (!user || !user._id) {
@@ -24,7 +24,7 @@ export async function addLoan(req:Request, res:Response){
                 }
                 const userId = user._id;
 
-        if(!bookId || !userId || !startDate || !endDate || !isAutonomous){
+        if(!bookId || !userId || !startDate || !endDate){
             res.status(400).json({message: 'Champs manquant'});
             return 
         }
@@ -46,8 +46,8 @@ export async function addLoan(req:Request, res:Response){
             res.status(400).json({ message: 'Le livre est déjà emprunté' });
             return;
         }
-        
-        const newLoan= new LoanSchema({bookId, userId, startDate, endDate, isAutonomous});
+
+        const newLoan= new LoanSchema({bookId, userId, startDate, endDate});
         const savedLoan= await newLoan.save();
         
         res.status(201).json({message: 'Emprunt ajouté avec succès', data: savedLoan });
