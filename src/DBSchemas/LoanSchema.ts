@@ -6,7 +6,7 @@ export interface ILoan extends Document {
     bookId: string; // ID du livre emprunté
     startDate: Date; // Date de début de l'emprunt
     endDate: Date; // Date de fin de l'emprunt
-    status: 'pending' | 'approved' | 'returned'; // Statut de l'emprunt
+    status: 'pending' | 'approved' | 'returned' ; // Statut de l'emprunt
     returnImages: string[]; // Images du livre emprunté
     returnedAt: Date | null; // Date de retour du livre, null si pas encore retourné
     addedAt: Date;
