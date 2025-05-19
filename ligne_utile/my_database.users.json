@@ -1,0 +1,102 @@
+[{
+  "_id": {
+    "$oid": "6808c88cda8e14df75dbac18"
+  },
+  "admin": false,
+  "name": "Hello World",
+  "phone": "0616732122",
+  "address": "rue machin",
+  "email": "helloworld@gmail.com",
+  "booksOwned": [],
+  "booksRead": [],
+  "hashedPassword": "$2b$10$H06RCqbIarKUu/qHUK0LH.zok1ukNfsz1xvNWcB2YIvrZ4eyp1bKW",
+  "addedAt": {
+    "$date": "2025-04-23T11:01:32.826Z"
+  },
+  "__v": 0,
+  "isActive": true,
+  "city": "Hello",
+  "lastLogin": {
+    "$date": "2025-05-14T12:18:39.155Z"
+  },
+  "department": "54"
+},
+{
+  "_id": {
+    "$oid": "6808ed51bdbc6b20fe61895b"
+  },
+  "admin": false,
+  "name": "Hello World2",
+  "phone": "0616732121",
+  "address": "2 rue machin",
+  "email": "helloworld2@gmail.com",
+  "booksOwned": [
+    "68121822eeb0fd0da88c132f"
+  ],
+  "booksRead": [],
+  "hashedPassword": "$2b$10$8IYf64JlE6nGMRmRJEb1LOm0HpgGy658tbbNo.63msUAr0QqIG80G",
+  "addedAt": {
+    "$date": "2025-04-23T13:38:25.663Z"
+  },
+  "__v": 3,
+  "isActive": false,
+  "lastLogin": {
+    "$date": "2025-04-10T11:01:32.826Z"
+  },
+  "city": "World",
+  "department": "57"
+},
+{
+  "_id": {
+    "$oid": "680f53ce31b1b9438bbc02d8"
+  },
+  "admin": false,
+  "name": "string",
+  "phone": "string",
+  "address": "string",
+  "email": "user@example.com",
+  "booksOwned": [],
+  "booksRead": [],
+  "hashedPassword": "$2b$10$y7baapZbXQe9nGS6NqGXkew5JwrhH6hOkiGzeKRXkZwrL0mc7gLEO",
+  "isActive": true,
+  "addedAt": {
+    "$date": "2025-04-28T10:09:18.623Z"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-04-23T11:01:32.826Z"
+  },
+  "city": "Nancy",
+  "department": "54"
+},
+{
+  "_id": {
+    "$oid": "681881ef97257515bc99bd27"
+  },
+  "admin": true,
+  "name": "Ava Sarf",
+  "phone": "+123456789",
+  "address": "123 Rue Exemple, Paris",
+  "email": "ava.sarf@example.com",
+  "booksOwned": [
+    {
+      "$oid": "68188328861bd25f23752013"
+    }
+  ],
+  "booksRead": [
+    {
+      "$oid": "68121822eeb0fd0da88c132f"
+    }
+  ],
+  "hashedPassword": "$2b$10$blyDyAXY/9u9QHrTpdcbmeIVECN4CtUilWD2ChEhyT8FHH.Kf5z3K",
+  "isActive": true,
+  "addedAt": {
+    "$date": "2025-05-05T09:16:31.529Z"
+  },
+  "__v": 2,
+  "lastLogin": {
+    "$date": "2025-05-14T12:18:00.425Z"
+  },
+  "city": "Longwy",
+  "department": "54"
+}]
