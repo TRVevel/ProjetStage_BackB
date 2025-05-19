@@ -15,7 +15,7 @@ export async function getAllLoans(req:Request, res:Response){
 export async function addLoan(req:Request, res:Response){
     try{
         const {bookId}= req.params;
-        const { startDate, endDate}= req.body;
+        const { startDate, endDate, isAutonomous}= req.body;
 
         const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
                 if (!user || !user._id) {
@@ -24,15 +24,30 @@ export async function addLoan(req:Request, res:Response){
                 }
                 const userId = user._id;
 
-        if(!bookId || !userId || !startDate || !endDate){
+        if(!bookId || !userId || !startDate || !endDate || !isAutonomous){
             res.status(400).json({message: 'Champs manquant'});
             return 
         }
         // chercher si un loan avec 
         // le meme user et pour le meme livre 
         // n'est pas deja en pending ou confirm
-
-        const newLoan= new LoanSchema({bookId, userId, startDate, endDate});
+        const existingLoan = await LoanSchema.findOne({ userId, bookId, status: { $in: ['pending', 'confirmed'] } });
+        if (existingLoan) {
+            res.status(400).json({ message: 'Un emprunt pour ce livre est déjà en cours' });
+            return;
+        }
+        // chercher si le livre n'est pas deja emprunte
+        const book = await BookSchema.findById(bookId).exec();
+        if (!book) {
+            res.status(404).json({ message: 'Livre non trouvé' });
+            return;
+        }
+        if (book.alreadyLoaned) {
+            res.status(400).json({ message: 'Le livre est déjà emprunté' });
+            return;
+        }
+        
+        const newLoan= new LoanSchema({bookId, userId, startDate, endDate, isAutonomous});
         const savedLoan= await newLoan.save();
         
         res.status(201).json({message: 'Emprunt ajouté avec succès', data: savedLoan });
