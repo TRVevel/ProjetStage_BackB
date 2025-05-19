@@ -1,0 +1,71 @@
+[{
+  "_id": {
+    "$oid": "68120f9fae5d4e2e0503db77"
+  },
+  "title": "Hello",
+  "description": "Soso Maness",
+  "genre": "Romance",
+  "author": "Me",
+  "publishedYear": 2000,
+  "images": [],
+  "language": "english",
+  "readBy": [],
+  "owner": {
+    "$oid": "6808c88cda8e14df75dbac18"
+  },
+  "isActive": true,
+  "alreadyLoaned": false,
+  "addedAt": {
+    "$date": "2025-04-30T11:55:11.805Z"
+  },
+  "__v": 0,
+  "ownerActive": true
+},
+{
+  "_id": {
+    "$oid": "68121822eeb0fd0da88c132f"
+  },
+  "title": "The Great Michel",
+  "description": "A novel written by us.",
+  "genre": "Fiction",
+  "author": "us",
+  "publishedYear": 1945,
+  "images": [],
+  "language": "english",
+  "readBy": [
+    "681881ef97257515bc99bd27"
+  ],
+  "owner": {
+    "$oid": "6808ed51bdbc6b20fe61895b"
+  },
+  "isActive": false,
+  "alreadyLoaned": false,
+  "addedAt": {
+    "$date": "2025-04-30T12:31:30.482Z"
+  },
+  "__v": 1,
+  "ownerActive": false
+},
+{
+  "_id": {
+    "$oid": "68188328861bd25f23752013"
+  },
+  "title": "The Great Gatsby",
+  "description": "A novel written by F. Scott Fitzgerald.",
+  "genre": "Fiction",
+  "author": "F. Scott Fitzgerald",
+  "publishedYear": 1925,
+  "images": [],
+  "language": "english",
+  "readBy": [],
+  "owner": {
+    "$oid": "681881ef97257515bc99bd27"
+  },
+  "isActive": true,
+  "alreadyLoaned": false,
+  "addedAt": {
+    "$date": "2025-05-05T09:21:44.594Z"
+  },
+  "__v": 0,
+  "ownerActive": true
+}]
