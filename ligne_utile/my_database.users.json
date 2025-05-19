@@ -19,7 +19,7 @@
   "lastLogin": {
     "$date": "2025-05-14T12:18:39.155Z"
   },
-  "department": "54"
+  "postalCode": "54"
 },
 {
   "_id": {
@@ -44,7 +44,7 @@
     "$date": "2025-04-10T11:01:32.826Z"
   },
   "city": "World",
-  "department": "57"
+  "postalCode": "57"
 },
 {
   "_id": {
@@ -67,7 +67,7 @@
     "$date": "2025-04-23T11:01:32.826Z"
   },
   "city": "Nancy",
-  "department": "54"
+  "postalCode": "54"
 },
 {
   "_id": {
@@ -98,5 +98,5 @@
     "$date": "2025-05-14T12:18:00.425Z"
   },
   "city": "Longwy",
-  "department": "54"
+  "postalCode": "54"
 }]
