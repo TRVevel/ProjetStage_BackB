@@ -50,6 +50,21 @@ function addLoan(req, res) {
             // chercher si un loan avec 
             // le meme user et pour le meme livre 
             // n'est pas deja en pending ou confirm
+            const existingLoan = yield LoanSchema_1.default.findOne({ userId, bookId, status: { $in: ['pending', 'confirmed'] } });
+            if (existingLoan) {
+                res.status(400).json({ message: 'Un emprunt pour ce livre est déjà en cours' });
+                return;
+            }
+            // chercher si le livre n'est pas deja emprunte
+            const book = yield BookSchema_1.default.findById(bookId).exec();
+            if (!book) {
+                res.status(404).json({ message: 'Livre non trouvé' });
+                return;
+            }
+            if (book.alreadyLoaned) {
+                res.status(400).json({ message: 'Le livre est déjà emprunté' });
+                return;
+            }
             const newLoan = new LoanSchema_1.default({ bookId, userId, startDate, endDate });
             const savedLoan = yield newLoan.save();
             res.status(201).json({ message: 'Emprunt ajouté avec succès', data: savedLoan });

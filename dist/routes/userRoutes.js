@@ -300,5 +300,4 @@ router.put('/users/:userId/active', verifyIsAdmin_1.isAdmin, userControllers_1.i
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.deleteUser);
-router.post('/city', userControllers_1.addCity);
 exports.default = router;

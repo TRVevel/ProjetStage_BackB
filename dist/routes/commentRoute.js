@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const commentController_1 = require("../controllers/commentController");
+const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
+const router = (0, express_1.Router)();
+router.get('/comments', commentController_1.getAllCommentByUser);
+router.get('/comments/:commentId', commentController_1.getCommentById);
+router.post('/comments', verifyTokenMiddleware_1.verifyTokenMiddleware, commentController_1.createComment);
+exports.default = router;

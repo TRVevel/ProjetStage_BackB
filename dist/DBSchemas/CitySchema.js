@@ -36,13 +36,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 // Définir le schéma Mongoose
 const CitySchema = new mongoose_1.Schema({
-    Id_villeFR: { type: Number, required: true },
-    ville_departement: { type: String, required: true },
-    ville_nom: { type: String, required: true },
-    ville_nom_simple: { type: String, required: true },
-    publishedYear: { type: Number, required: true },
-    ville_code_postal: { type: String, required: true },
-    Id_departement: { type: String, required: true }
+    ville_departement: { type: String },
+    ville_nom: { type: String },
+    ville_nom_simple: { type: String },
+    ville_nom_reel: { type: String },
+    ville_code_postal: { type: String },
 });
+CitySchema.index({ ville_nom_simple: 1 });
 // Exporter le modèle
 exports.default = mongoose_1.default.model('City', CitySchema);
