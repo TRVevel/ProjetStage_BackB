@@ -10,12 +10,11 @@ export const userValidationSchema = Joi.object({
     email: Joi.string().email().required().messages({
         'string.email': '"email" doit être une adresse email valide.',
     }),
-    phone: Joi.string().min(10).max(15).required().pattern(/^[0-9]+$/).messages({
-        'string.pattern.base': '"phone" doit contenir uniquement des chiffres.',
+    phone: Joi.string().min(10).max(15).messages({
         'string.min': '"phone" doit comporter au moins 10 caractères.',
         'string.max': '"phone" doit comporter au maximum 15 caractères.',
     }),
-    adress: Joi.string().min(10).max(255).required().messages({
+    address: Joi.string().min(10).max(255).required().messages({
         'string.min': '"adress" doit comporter au moins 10 caractères.',
         'string.max': '"adress" doit comporter au maximum 255 caractères.',
     }),
@@ -29,8 +28,8 @@ export const userValidationSchema = Joi.object({
         'string.min': '"postalCode" doit comporter exactement 5 caractères.',
         'string.max': '"postalCode" doit comporter exactement 5 caractères.',
     }),
-    password: Joi.string().min(8).required().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/).messages({
-        'string.pattern.base': '"hashedpassword" doit comporter au moins une majuscule, une minuscule, un chiffre et un caractère spécial.',
+    password: Joi.string().min(8).required().pattern(/^(?=.*[!@#$%^&*])(?=.*\d)/).messages({
+        'string.pattern.base': '"hashedpassword" doit comporter au moins un chiffre et un caractère spécial.',
         'string.min': '"hashedpassword" doit comporter au moins 8 caractères.',
     }),
 });

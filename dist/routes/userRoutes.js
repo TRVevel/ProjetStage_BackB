@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const userControllers_1 = require("../controllers/userControllers");
 const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
+const verifyIsAdmin_1 = require("../middlewares/verifyIsAdmin");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -28,7 +29,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Erreur interne
  */
-router.get('/users', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getAllUsers);
+router.get('/users', verifyIsAdmin_1.isAdmin, userControllers_1.getAllUsers);
 /**
  * @swagger
  * /api/users/{userId}:
@@ -77,7 +78,7 @@ router.get('/users', verifyTokenMiddleware_1.verifyTokenMiddleware, userControll
  *                   type: string
  *                   example: Erreur interne
  */
-router.get('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserById);
+router.get('/users/:userId', verifyIsAdmin_1.isAdmin, userControllers_1.getUserById);
 /**
  * @swagger
  * /api/users/search/{query}:
@@ -108,7 +109,7 @@ router.get('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, user
  *       500:
  *         description: Erreur interne
  */
-router.get('/users/search/:query', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.getUserByNameOrEmailOrPostalCode);
+router.get('/users/search/:query', verifyIsAdmin_1.isAdmin, userControllers_1.getUserByNameOrEmailOrPostalCode);
 /**
  * @swagger
  * /api/users/{userId}:
@@ -251,7 +252,7 @@ router.put('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, user
  *                   type: string
  *                   example: Erreur interne
  */
-router.put('/users/:userId/active', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.isActive);
+router.put('/users/:userId/active', verifyIsAdmin_1.isAdmin, userControllers_1.isActive);
 /**
  * @swagger
  * /api/users/{userId}:
@@ -299,5 +300,4 @@ router.put('/users/:userId/active', verifyTokenMiddleware_1.verifyTokenMiddlewar
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.deleteUser);
-router.get('/users/test', userControllers_1.verifyActivity);
 exports.default = router;

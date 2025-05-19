@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const bookController_1 = require("../controllers/bookController");
 const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
+const verifyIsAdmin_1 = require("../middlewares/verifyIsAdmin");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -28,7 +29,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: "Internal server error"
  */
-router.get('/books', bookController_1.getAllBooks);
+router.get('/books', verifyIsAdmin_1.isAdmin, bookController_1.getAllBooks);
 /**
  * @swagger
  * /api/books/active:

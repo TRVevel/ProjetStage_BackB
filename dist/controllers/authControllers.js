@@ -85,7 +85,7 @@ function login(req, res) {
                 yield book.save();
             }
             // Générer un token avec les informations de l'utilisateur
-            const token = (0, JWTUtils_1.generateToken)({ _id: user._id, email: user.email });
+            const token = (0, JWTUtils_1.generateToken)({ _id: user._id, email: user.email, admin: user.admin });
             // Stocker le token dans un cookie
             res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
             yield user.save();
@@ -94,6 +94,7 @@ function login(req, res) {
                 data: {
                     userId: user._id,
                     email: user.email,
+                    admin: user.admin,
                     userActivity: user.isActive
                 }
             });
@@ -102,15 +103,6 @@ function login(req, res) {
             res.status(500).json({ message: error.message });
         }
     });
-}
-/**
- * Fonction pour décoder le JWT
- * @param token
- */
-function decodeToken(token) {
-    // Utilise une bibliothèque comme jwt-simple ou jsonwebtoken pour décoder le token
-    const jwt = require('jsonwebtoken');
-    return jwt.decode(token); // Décoder le token sans vérifier la signature
 }
 function logout(req, res) {
     return __awaiter(this, void 0, void 0, function* () {

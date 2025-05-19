@@ -18,7 +18,6 @@ exports.getUserByNameOrEmailOrPostalCode = getUserByNameOrEmailOrPostalCode;
 exports.updateUser = updateUser;
 exports.isActive = isActive;
 exports.deleteUser = deleteUser;
-exports.verifyActivity = verifyActivity;
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const LoanSchema_1 = __importDefault(require("../DBSchemas/LoanSchema"));
 const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
@@ -166,33 +165,6 @@ function deleteUser(req, res) {
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
-        }
-    });
-}
-function verifyActivity(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const users = yield UserSchema_1.default.find();
-            const now = new Date();
-            for (const user of users) {
-                if (!user.lastLogin) {
-                    console.log(`Utilisateur ${user._id} n'a jamais été connecté.`);
-                    continue;
-                }
-                const lastLogin = new Date(user.lastLogin);
-                const differenceInDays = Math.floor((now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
-                if (differenceInDays > 30) {
-                    user.isActive = false;
-                }
-                yield user.save();
-            }
-            res.status(200).json({ message: 'Activité utilisateur vérifiée avec succès.' });
-            return;
-        }
-        catch (error) {
-            console.error('Erreur lors de la vérification de l’activité :', error);
-            res.status(500).json({ error: 'Erreur interne du serveur' });
-            return;
         }
     });
 }

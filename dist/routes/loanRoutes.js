@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const loanConttrolers_1 = require("../controllers/loanConttrolers");
 const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
+const verifyIsAdmin_1 = require("../middlewares/verifyIsAdmin");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -51,7 +52,7 @@ const router = (0, express_1.Router)();
  *                   type: string
  *                   example: [description de l'erreur]
  */
-router.get('/loans', loanConttrolers_1.getAllLoans);
+router.get('/loans', verifyIsAdmin_1.isAdmin, loanConttrolers_1.getAllLoans);
 /**
  * @swagger
  * /api/loans/{bookId}:

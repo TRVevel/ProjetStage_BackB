@@ -29,7 +29,7 @@ const router = Router();
  *       500:
  *         description: Erreur interne
  */
-router.get('/users', isAdmin, getAllUsers);
+router.get('/users',  getAllUsers);
 
 /**
  * @swagger

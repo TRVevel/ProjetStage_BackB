@@ -16,18 +16,28 @@ exports.startUserActivityCron = startUserActivityCron;
 // src/cron/activityCron.ts
 const node_cron_1 = __importDefault(require("node-cron"));
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
+const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
 function startUserActivityCron() {
-    node_cron_1.default.schedule('0 2 * * *', () => __awaiter(this, void 0, void 0, function* () {
+    node_cron_1.default.schedule('0 0 * * *', () => __awaiter(this, void 0, void 0, function* () {
         console.log("⏰ Cron lancé : vérification des activités utilisateur");
         try {
             const users = yield UserSchema_1.default.find();
             const now = new Date();
             for (const user of users) {
-                if (!user.lastLogin)
+                if (!user.lastLogin) {
+                    console.log(`Utilisateur ${user._id} n'a jamais été connecté.`);
                     continue;
+                }
                 const lastLogin = new Date(user.lastLogin);
-                const diffDays = Math.floor((now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
-                user.isActive = diffDays <= 30;
+                const differenceInDays = Math.floor((now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
+                if (differenceInDays > 30) {
+                    user.isActive = false;
+                    const books = yield BookSchema_1.default.find({ owner: user._id });
+                    for (const book of books) {
+                        book.ownerActive = false;
+                        yield book.save();
+                    }
+                }
                 yield user.save();
             }
             console.log("✅ Vérification terminée avec succès.");

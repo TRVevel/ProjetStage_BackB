@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
+import cors from "cors";
 import { startUserActivityCron } from "./cron/activityCron";
 
 
@@ -16,6 +17,11 @@ dotenv.config();
 console.log(process.env.MONGO_URI);
 const PORT = process.env.PORT;
 console.log(PORT);
+
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
 
 app.use(express.json());
 // Connecter MongoDB
@@ -51,6 +57,7 @@ const connectDB = async () => {
     app.use('/api', eventRoutes)
     
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+    
 
 app.listen(3000, () => {
     console.log('Server is running on port :',PORT); 
