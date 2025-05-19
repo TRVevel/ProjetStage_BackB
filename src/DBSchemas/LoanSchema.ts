@@ -6,7 +6,7 @@ export interface ILoan extends Document {
     bookId: string; // ID du livre emprunté
     startDate: Date; // Date de début de l'emprunt
     endDate: Date; // Date de fin de l'emprunt
-    status: 'pending' | 'approved' | 'returned'; // Statut de l'emprunt
+    status: 'pending' | 'approved' | 'returned' | 'given' | 'obtained'; // Statut de l'emprunt
     isAutonomous: boolean; // Indique si l'emprunt est autonome ou non
     returnImages: string[]; // Images du livre emprunté
     returnedAt: Date | null; // Date de retour du livre, null si pas encore retourné
@@ -27,7 +27,7 @@ const LoanSchema: Schema = new Schema({
           }, // ID du livre emprunté
     startDate: { type: Date, required: true }, // Date de début de l'emprunt
     endDate: { type: Date, required: true }, // Date de fin de l'emprunt
-    status: { type: String, enum: ['pending', 'approved', 'returned'], default: 'pending' }, // Statut de l'emprunt
+    status: { type: String, enum: ['pending', 'approved', 'returned', 'given', 'obtained'], default: 'pending' }, // Statut de l'emprunt
     isAutonomous: { type: Boolean, default: false }, // Indique si l'emprunt est autonome ou non
     returnImages: { type: [String], default: [] }, // Images du livre emprunté
     returnedAt: { type: Date, default: null }, // Date de retour du livre, null si pas encore retourné
