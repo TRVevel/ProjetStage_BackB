@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllCities, getCityByName } from "../controllers/cityDbControllers";
+import { getAllCities} from "../controllers/cityDbControllers";
 
 const router = Router();
 /**
@@ -25,7 +25,5 @@ const router = Router();
  *                     $ref: '#/components/schemas/City'
  */
 router.get("/cities", getAllCities);
-
-router.get("/cities/:cityName", getCityByName);
 
 export default router;
