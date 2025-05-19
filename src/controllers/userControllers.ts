@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserSchema from '../DBSchemas/UserSchema';
 import LoanSchema from '../DBSchemas/LoanSchema';
 import BookSchema from '../DBSchemas/BookSchema';
+import CitySchema from '../DBSchemas/CitySchema';
 
 export async function getAllUsers(req:Request, res:Response){
     try{
@@ -158,5 +159,3 @@ export async function deleteUser(req: Request, res: Response) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
-
-

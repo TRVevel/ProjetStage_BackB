@@ -29,6 +29,10 @@ dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
 const PORT = process.env.PORT;
 console.log(PORT);
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:4200',
+    credentials: true
+}));
 app.use(express_1.default.json());
 // Connecter MongoDB
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +65,6 @@ app.use('/api', bookRoutes_1.default);
 app.use('/api', loanRoutes_1.default);
 app.use('/api', eventRoutes_1.default);
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
-app.use((0, cors_1.default)());
 app.listen(3000, () => {
     console.log('Server is running on port :', PORT);
 });

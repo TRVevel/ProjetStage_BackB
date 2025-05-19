@@ -29,7 +29,7 @@ const router = (0, express_1.Router)();
  *       500:
  *         description: Erreur interne
  */
-router.get('/users', verifyIsAdmin_1.isAdmin, userControllers_1.getAllUsers);
+router.get('/users', userControllers_1.getAllUsers);
 /**
  * @swagger
  * /api/users/{userId}:
@@ -300,4 +300,5 @@ router.put('/users/:userId/active', verifyIsAdmin_1.isAdmin, userControllers_1.i
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.deleteUser);
+router.post('/city', userControllers_1.addCity);
 exports.default = router;

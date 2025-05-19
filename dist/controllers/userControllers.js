@@ -18,9 +18,11 @@ exports.getUserByNameOrEmailOrPostalCode = getUserByNameOrEmailOrPostalCode;
 exports.updateUser = updateUser;
 exports.isActive = isActive;
 exports.deleteUser = deleteUser;
+exports.addCity = addCity;
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const LoanSchema_1 = __importDefault(require("../DBSchemas/LoanSchema"));
 const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
+const CitySchema_1 = __importDefault(require("../DBSchemas/CitySchema"));
 function getAllUsers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -162,6 +164,31 @@ function deleteUser(req, res) {
                 return;
             }
             res.status(200).json({ message: 'Utilisateur supprimé avec succès', data: deletedUser });
+        }
+        catch (err) {
+            res.status(500).json({ message: 'Erreur interne', error: err.message });
+        }
+    });
+}
+function addCity(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { Id_villeFR, ville_departement, ville_nom, ville_nom_simple, ville_nom_reel, ville_code_postal, Id_departement } = req.body;
+            if (!Id_villeFR || !ville_departement || !ville_nom || !ville_nom_simple || !ville_nom_reel || !ville_code_postal || !Id_departement) {
+                res.status(400).json({ message: 'Champs manquant' });
+                return;
+            }
+            const newCity = new CitySchema_1.default({
+                Id_villeFR,
+                ville_departement,
+                ville_nom,
+                ville_nom_simple,
+                ville_nom_reel,
+                ville_code_postal,
+                Id_departement
+            });
+            yield newCity.save();
+            res.status(200).json({ message: 'City Ajouté', data: newCity });
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
