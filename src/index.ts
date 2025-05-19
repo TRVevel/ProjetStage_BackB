@@ -10,6 +10,7 @@ import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
 import cors from "cors";
 import { startUserActivityCron } from "./cron/activityCron";
+import commentRoute from "./routes/commentRoute";
 
 
 const app = express();
@@ -55,6 +56,7 @@ const connectDB = async () => {
     app.use('/api', bookRoutes);
     app.use('/api', loanRoutes);
     app.use('/api', eventRoutes)
+    app.use('/api', commentRoute)
     
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
     
