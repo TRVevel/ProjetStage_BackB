@@ -3,14 +3,15 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import swaggerDocs from "./config/swagger";
 import swaggerUi from 'swagger-ui-express';
+import cors from "cors";
+import { startUserActivityCron } from "./cron/activityCron";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
-import cors from "cors";
-import { startUserActivityCron } from "./cron/activityCron";
 import commentRoute from "./routes/commentRoute";
+import cityDbRoutes from "./routes/cityDbRoutes";
 
 
 const app = express();
@@ -57,10 +58,11 @@ const connectDB = async () => {
     app.use('/api', loanRoutes);
     app.use('/api', eventRoutes)
     app.use('/api', commentRoute)
+    app.use('/api', cityDbRoutes)
     
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
     
 
 app.listen(3000, () => {
-    console.log('Server is running on port :',PORT); 
+    console.log('Server is running on port :',PORT);
 });
