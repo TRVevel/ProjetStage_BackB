@@ -12,7 +12,17 @@ import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
 import commentRoute from "./routes/commentRoute";
 import cityDbRoutes from "./routes/cityDbRoutes";
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: 'dhsf409o1',
+  api_key: '317442182697478',
+  api_secret: 'x37XaPmNXdQKa9huxGq2MJ8_R-A'
+});
+
+
+//-------------------------------------------------------------------------------------------
 
 const app = express();
 dotenv.config();

@@ -16,7 +16,7 @@ export async function getAllBooksByActiveAndOwnerActive(req:Request, res:Respons
     try{ 
         const books = await BookSchema.find({isActive: true, ownerActive: true});
 
-    res.status(200).json({message: 'Liste des livres', data: books});
+    res.status(200).json(books);
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -72,7 +72,7 @@ export async function getBooksBypostalCode(req: Request, res: Response) {
 
 export async function addBook(req: Request, res: Response) {
     try {
-      const { title, description, author, genre, publishedYear, language} = req.body;
+      const { title, description, author, genre, publishedYear, language, images} = req.body;
   
       if (!title || !description || !author || !genre || !publishedYear || !language) {
         res.status(400).json({ message: 'Champs manquant' });
@@ -88,7 +88,7 @@ export async function addBook(req: Request, res: Response) {
 
     const owner = user._id;
 
-    const newBook = new BookSchema({ title, description, author, genre, publishedYear, language, owner });
+    const newBook = new BookSchema({ title, description, author, genre, publishedYear, language, owner, images });
     const savedBook = await newBook.save();
 
     const userRecord = await UserSchema.findById(owner);
