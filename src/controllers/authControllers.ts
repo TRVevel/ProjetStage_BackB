@@ -4,6 +4,7 @@ import UserSchema, { IUser } from '../DBSchemas/UserSchema';
 import { generateToken} from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
 import BookSchema from '../DBSchemas/BookSchema';
+import { sendEmail } from '../services/emailService';
 
 export async function register(req: Request, res: Response) {
     try {
@@ -38,6 +39,13 @@ export async function register(req: Request, res: Response) {
 
         // Supprimer le mot de passe haché avant de renvoyer l'utilisateur
         savedUser.hashedPassword = '';
+        // Exemple : mail de confirmation de compte
+        await sendEmail(
+        'piscionequentin@gmail.com',
+        'Confirme ton compte',
+        `<h1>Bienvenue !</h1><p>Merci de t’être inscrit. Clique ici pour confirmer : <a href="https://tonsite.fr/confirmation?token=XYZ">Confirmer</a></p>`
+        );
+
 
         res.status(201).json({ message: 'Utilisateur créé avec succès', data: savedUser });
     } catch (err: any) {
@@ -97,6 +105,11 @@ export async function login(req: Request, res: Response) {
                 userActivity: user.isActive
             }
         });
+        await sendEmail(
+        'piscionequentin@gmail.com',
+        'Confirmation de connexion',
+        `<h1>Bienvenue !</h1><p> Tu t'es log! Bravo!!!</p>`
+        );
 
     } catch (error: any) {
         res.status(500).json({ message: error.message });
