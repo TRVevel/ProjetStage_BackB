@@ -33,17 +33,20 @@ const router = Router();
  *                 example: "+123456789"
  *               address:
  *                 type: string
- *                 example: "123 Rue Exemple, Paris"
+ *                 example: "123 Rue Exemple"
  *               postalCode:
  *                 type: string
- *                 example: "54"
+ *                 example: "54000"
+ *               city:
+ *                type: string
+ *                example: "Nancy"
  *               email:
  *                 type: string
  *                 format: email
  *                 example: "ava.sarf@example.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "Password123@"
  *     responses:
  *       201:
  *         description: Utilisateur créé avec succès
