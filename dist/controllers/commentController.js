@@ -16,12 +16,14 @@ exports.getAllCommentsByBook = getAllCommentsByBook;
 exports.getCommentById = getCommentById;
 exports.getAllCommentByUser = getAllCommentByUser;
 exports.createComment = createComment;
+exports.modifyComment = modifyComment;
+exports.deleteComment = deleteComment;
 const CommentSchema_1 = __importDefault(require("../DBSchemas/CommentSchema"));
 function getAllCommentsByBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { bookId } = req.params;
-            const comments = yield CommentSchema_1.default.find({ where: { book: bookId } });
+            const comments = yield CommentSchema_1.default.find({ book_id: bookId });
             res.status(200).json({ message: 'Liste des commentaires', data: comments });
         }
         catch (err) {
@@ -34,7 +36,8 @@ function getCommentById(req, res) {
         try {
             const { commentId } = req.params;
             if (!commentId) {
-                res.status(400).json;
+                res.status(400).json({ message: 'Champs manquant' });
+                return;
             }
             const comment = yield CommentSchema_1.default.findById(commentId);
             if (!comment) {
@@ -69,7 +72,7 @@ function createComment(req, res) {
             // Validation des champs
             const { comment, title } = req.body;
             const user = req.headers.user ? JSON.parse(req.headers.user) : null;
-            const book = req.headers.book ? JSON.parse(req.headers.book) : null;
+            const book = req.params.bookId;
             if (!comment) {
                 res.status(400).send('Le commentaire est incomplet.');
                 return;
@@ -79,11 +82,12 @@ function createComment(req, res) {
                 return;
             }
             if (!book) {
-                res.status(400).json({ message: "Le post avec cet ID n'existe pas." });
+                res.status(400).json({ message: "Le livre avec cet ID n'existe pas." });
                 return;
             }
-            const commentUser = new CommentSchema_1.default({ title, comment });
+            const commentUser = new CommentSchema_1.default({ book_id: book, owner: user, title, comment });
             const savedComment = yield commentUser.save();
+            res.status(200).json({ message: 'Livre trouvé', data: savedComment });
         }
         catch (err) {
             // Gestion des erreurs
@@ -91,35 +95,43 @@ function createComment(req, res) {
         }
     });
 }
-// export async function modifyComment(req: Request, res: Response) {
-//     try {
-//         const { id } = req.params;
-//         const { comment } = req.body;
-//         const commentUser = await Commentaire.findByPk(id);
-//         if (!commentUser) {
-//             res.status(404).json({ message: "Commentaire non trouvé" });
-//             return
-//         }
-//         if (comment) commentUser.comment = comment;
-//         await commentUser.save();
-//         res.status(200).json({ message: "Commentaire modifié avec succès", commentUser});
-//     } catch (error) {
-//         console.error("Erreur lors de la modification :", error);
-//         res.status(500).json({ message: "Erreur serveur" });
-//     }
-// }
-// export async function deleteComment(req: Request, res: Response) {
-//     try {
-//         const {id } = req.params;
-//         const commentUser = await Commentaire.findByPk(id);
-//         if (!commentUser) {
-//             res.status(404).json({ message: "Commentaire non trouvé" });
-//             return
-//         }
-//         await commentUser.destroy();
-//         res.json({ message: "Commentaire supprimé avec succès" });
-//     } catch (error) {
-//         console.error("Erreur lors de la suppression :", error);
-//         res.status(500).json({ message: "Erreur serveur" });
-//     }
-// }
+function modifyComment(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { commentId } = req.params;
+            const { title, comment } = req.body;
+            const commentUser = yield CommentSchema_1.default.findById(commentId);
+            if (!commentUser) {
+                res.status(404).json({ message: "Commentaire non trouvé" });
+                return;
+            }
+            if (comment)
+                commentUser.comment = comment;
+            if (title)
+                commentUser.title = title;
+            yield commentUser.save();
+            res.status(200).json({ message: "Commentaire modifié avec succès", commentUser });
+        }
+        catch (error) {
+            console.error("Erreur lors de la modification :", error);
+            res.status(500).json({ message: "Erreur serveur" });
+        }
+    });
+}
+function deleteComment(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { commentId } = req.params;
+            const commentUser = yield CommentSchema_1.default.findByIdAndDelete(commentId);
+            if (!commentUser) {
+                res.status(404).json({ message: "Commentaire non trouvé" });
+                return;
+            }
+            res.json({ message: "Commentaire supprimé avec succès" });
+        }
+        catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+            res.status(500).json({ message: "Erreur serveur" });
+        }
+    });
+}

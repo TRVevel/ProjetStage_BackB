@@ -26,5 +26,4 @@ const router = (0, express_1.Router)();
  *                     $ref: '#/components/schemas/City'
  */
 router.get("/cities", cityDbControllers_1.getAllCities);
-router.get("/cities/:cityName", cityDbControllers_1.getCityByName);
 exports.default = router;

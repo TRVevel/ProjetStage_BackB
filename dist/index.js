@@ -17,7 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const swagger_1 = __importDefault(require("./config/swagger"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const cors_1 = __importDefault(require("cors"));
+// import cors from "cors";
 const activityCron_1 = require("./cron/activityCron");
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
@@ -26,15 +26,23 @@ const loanRoutes_1 = __importDefault(require("./routes/loanRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const commentRoute_1 = __importDefault(require("./routes/commentRoute"));
 const cityDbRoutes_1 = __importDefault(require("./routes/cityDbRoutes"));
+const cloudinary_1 = require("cloudinary");
+// Cloudinary configuration
+cloudinary_1.v2.config({
+    cloud_name: 'dhsf409o1',
+    api_key: '317442182697478',
+    api_secret: 'x37XaPmNXdQKa9huxGq2MJ8_R-A'
+});
+//-------------------------------------------------------------------------------------------
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
 const PORT = process.env.PORT;
 console.log(PORT);
-app.use((0, cors_1.default)({
-    origin: 'http://localhost:4200',
-    credentials: true
-}));
+// app.use(cors({
+//   origin: 'http://localhost:4200',
+//   credentials: true
+// }));
 app.use(express_1.default.json());
 // Connecter MongoDB
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
