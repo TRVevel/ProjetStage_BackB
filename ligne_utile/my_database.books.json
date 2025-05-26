@@ -11,7 +11,7 @@
   "language": "english",
   "readBy": [],
   "owner": {
-    "$oid": "6808c88cda8e14df75dbac18"
+    "$oid": "682dcb80c5fdfa1adef89f46"
   },
   "isActive": true,
   "alreadyLoaned": false,
@@ -36,7 +36,7 @@
     "681881ef97257515bc99bd27"
   ],
   "owner": {
-    "$oid": "6808ed51bdbc6b20fe61895b"
+    "$oid": "682dcd2f3a38806a6bdf90bb"
   },
   "isActive": false,
   "alreadyLoaned": false,
@@ -59,7 +59,7 @@
   "language": "english",
   "readBy": [],
   "owner": {
-    "$oid": "681881ef97257515bc99bd27"
+    "$oid": "682dccec3a38806a6bdf90b5"
   },
   "isActive": true,
   "alreadyLoaned": false,
@@ -68,4 +68,27 @@
   },
   "__v": 0,
   "ownerActive": true
+},
+{
+  "_id": {
+    "$oid": "68342b1a0835e4fe5b46f30a"
+  },
+  "title": "The Great Mory",
+  "description": "A novel written by F. Scott Monau.",
+  "genre": "Fiction",
+  "author": "F. Scott Monau",
+  "publishedYear": 1125,
+  "language": "english",
+  "images": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Shadow_2752.jpg/500px-Shadow_2752.jpg",
+  "readBy": [],
+  "owner": {
+    "$oid": "682dcb80c5fdfa1adef89f46"
+  },
+  "isActive": true,
+  "ownerActive": true,
+  "alreadyLoaned": false,
+  "addedAt": {
+    "$date": "2025-05-26T08:49:30.655Z"
+  },
+  "__v": 0
 }]
