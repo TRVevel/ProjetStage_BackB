@@ -104,7 +104,7 @@ router.post('/login', authControllers_1.login);
  *       500:
  *         description: Erreur interne
  */
-router.post('/logout', verifyTokenMiddleware_1.verifyTokenMiddleware, authControllers_1.logout);
+router.post('/logout', authControllers_1.logout);
 /**
  * @swagger
  * /api/auth/updatePassword:

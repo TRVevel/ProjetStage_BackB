@@ -158,6 +158,9 @@ router.get('/books/postalCode/:postalCode', bookController_1.getBooksBypostalCod
  *               language:
  *                 type: string
  *                 example: "english"
+ *              images:
+ *                type: string
+ *               example: "https://example.com/image.jpg"
  *     responses:
  *       201:
  *         description: "Book added successfully"

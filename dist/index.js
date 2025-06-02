@@ -17,7 +17,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const swagger_1 = __importDefault(require("./config/swagger"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-// import cors from "cors";
+const cors_1 = __importDefault(require("cors"));
 const activityCron_1 = require("./cron/activityCron");
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
@@ -39,10 +39,10 @@ dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
 const PORT = process.env.PORT;
 console.log(PORT);
-// app.use(cors({
-//   origin: 'http://localhost:4200',
-//   credentials: true
-// }));
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:4200',
+    credentials: true
+}));
 app.use(express_1.default.json());
 // Connecter MongoDB
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {

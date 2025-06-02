@@ -43,7 +43,7 @@ const BookSchema = new mongoose_1.Schema({
     publishedYear: { type: Number, required: true },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
     state: { type: String, enum: ['new', 'good', 'used'], required: false },
-    images: { type: [String], default: [] },
+    images: { type: String, default: '' }, // Chemin de l'image du livre, par défaut une chaîne vide
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
         type: mongoose_1.default.Schema.Types.ObjectId,
