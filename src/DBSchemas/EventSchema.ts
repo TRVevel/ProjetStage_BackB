@@ -4,7 +4,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IEvent extends Document {
     title : string;
     description: string;
-    images: string[];
+    images: string;
     language: "french" | "ukrainian" | "english";
     usersInEvent: string[];
     eventStartDate: Date;
@@ -16,7 +16,7 @@ export interface IEvent extends Document {
 const EventSchema: Schema = new Schema({
     title: { type: String, required: true},
     description: { type: String, required: true },
-    images: { type: [String], default: [] },
+    images: { type: String, default: "" },
     language: { type: String,enum: ['french', 'ukrainian', 'english'], required: true},
     usersInEvent: { type: [String], default: [] },
     eventStartDate: { type: Date, required: true },

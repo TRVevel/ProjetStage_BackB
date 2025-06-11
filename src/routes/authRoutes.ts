@@ -106,7 +106,7 @@ router.post('/login', login);
  *       500:
  *         description: Erreur interne
  */
-router.post('/logout',verifyTokenMiddleware, logout);
+router.post('/logout', logout);
 
 /**
  * @swagger

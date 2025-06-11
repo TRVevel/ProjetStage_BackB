@@ -33,17 +33,20 @@ const router = (0, express_1.Router)();
  *                 example: "+123456789"
  *               address:
  *                 type: string
- *                 example: "123 Rue Exemple, Paris"
+ *                 example: "123 Rue Exemple"
  *               postalCode:
  *                 type: string
- *                 example: "54"
+ *                 example: "54000"
+ *               city:
+ *                type: string
+ *                example: "Nancy"
  *               email:
  *                 type: string
  *                 format: email
  *                 example: "ava.sarf@example.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "Password123@"
  *     responses:
  *       201:
  *         description: Utilisateur créé avec succès
@@ -101,7 +104,7 @@ router.post('/login', authControllers_1.login);
  *       500:
  *         description: Erreur interne
  */
-router.post('/logout', verifyTokenMiddleware_1.verifyTokenMiddleware, authControllers_1.logout);
+router.post('/logout', authControllers_1.logout);
 /**
  * @swagger
  * /api/auth/updatePassword:

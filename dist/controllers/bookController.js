@@ -38,7 +38,7 @@ function getAllBooksByActiveAndOwnerActive(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const books = yield BookSchema_1.default.find({ isActive: true, ownerActive: true });
-            res.status(200).json({ message: 'Liste des livres', data: books });
+            res.status(200).json(books);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
@@ -96,7 +96,7 @@ function getBooksBypostalCode(req, res) {
 function addBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { title, description, author, genre, publishedYear, language } = req.body;
+            const { title, description, author, genre, publishedYear, language, images } = req.body;
             if (!title || !description || !author || !genre || !publishedYear || !language) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
@@ -108,7 +108,7 @@ function addBook(req, res) {
                 return;
             }
             const owner = user._id;
-            const newBook = new BookSchema_1.default({ title, description, author, genre, publishedYear, language, owner });
+            const newBook = new BookSchema_1.default({ title, description, author, genre, publishedYear, language, owner, images });
             const savedBook = yield newBook.save();
             const userRecord = yield UserSchema_1.default.findById(owner);
             if (!userRecord) {

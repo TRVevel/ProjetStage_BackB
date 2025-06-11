@@ -43,5 +43,6 @@ const CitySchema = new mongoose_1.Schema({
     ville_code_postal: { type: String },
 });
 CitySchema.index({ ville_nom_simple: 1 });
-// Exporter le modèle
-exports.default = mongoose_1.default.model('City', CitySchema);
+// Vérifier si le modèle existe déjà avant de le définir
+const CityModel = mongoose_1.default.models.City || mongoose_1.default.model('City', CitySchema);
+exports.default = CityModel;

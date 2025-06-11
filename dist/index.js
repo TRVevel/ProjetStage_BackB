@@ -26,6 +26,14 @@ const loanRoutes_1 = __importDefault(require("./routes/loanRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const commentRoute_1 = __importDefault(require("./routes/commentRoute"));
 const cityDbRoutes_1 = __importDefault(require("./routes/cityDbRoutes"));
+const cloudinary_1 = require("cloudinary");
+// Cloudinary configuration
+cloudinary_1.v2.config({
+    cloud_name: 'dhsf409o1',
+    api_key: '317442182697478',
+    api_secret: 'x37XaPmNXdQKa9huxGq2MJ8_R-A'
+});
+//-------------------------------------------------------------------------------------------
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 console.log(process.env.MONGO_URI);
