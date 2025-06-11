@@ -12,9 +12,7 @@ export interface IBook extends Document {
     imageCouverture: string;
     imageBack: string;
     imageInBook: string;
-=======
     images: string;
->>>>>>> b8c3b51ca433b119fd7674711eef2f96ad02eecf
     readBy: string[]; // Tableau d'IDs de livres lus
     owner: string;
     isActive: boolean;
@@ -35,10 +33,7 @@ const BookSchema: Schema = new Schema({
     imageCouverture: { type: String, required: true }, 
     imageBack: { type: String, required: true },
     imageInBook: { type: String, required: true }, 
-=======
-    state: { type: String,enum: ['new', 'good', 'used'], required: false},
     images: { type: String, default: '' }, // Chemin de l'image du livre, par défaut une chaîne vide
->>>>>>> b8c3b51ca433b119fd7674711eef2f96ad02eecf
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
         type: mongoose.Schema.Types.ObjectId,
