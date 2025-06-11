@@ -4,12 +4,14 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IBook extends Document {
     title : string;
     description: string;
-    genre: string;
+    genre: "fantasy" | "science-fiction" | "romance" | "mystery" | "non-fiction" | "historical" | "thriller" | "horror" | "biography" | "self-help" | "children's" | "young adult" | "poetry" | "classics" | "manga" | "comics" | "adventure" | "educative" | "cookbook" | "travel" | "humor" ; // Genre du livre
     author: string;
     publishedYear: number;
     language: "french" | "ukrainian" | "english";
     state: "new"| "good" | "used"; // État du livre (neuf, bon état, usé, etc.)
-    images: string[];
+    imageCouverture: string;
+    imageBack: string;
+    imageInBook: string;
     readBy: string[]; // Tableau d'IDs de livres lus
     owner: string;
     isActive: boolean;
@@ -22,12 +24,14 @@ export interface IBook extends Document {
 const BookSchema: Schema = new Schema({
     title: { type: String, required: true},
     description: { type: String, required: true },
-    genre: { type: String, required: true },
+    genre: { type: String, enum: ['fantasy', 'science-fiction', 'romance', 'mystery', 'non-fiction', 'historical', 'thriller', 'horror', 'biography', 'self-help', "children's", 'young adult', 'poetry', 'classics', 'manga', 'comics', 'adventure', 'educative', 'cookbook', 'travel', 'humor'], required: true }, // Genre du livre
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
     language: { type: String,enum: ['french', 'ukrainian', 'english'], required: true},
-    state: { type: String,enum: ['new', 'good', 'used'], required: false},
-    images: { type: [String], default: [] },
+    state: { type: String,enum: ['new', 'good', 'used'], required: false, default: 'good' },
+    imageCouverture: { type: String, required: true }, 
+    imageBack: { type: String, required: true },
+    imageInBook: { type: String, required: true }, 
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
         type: mongoose.Schema.Types.ObjectId,

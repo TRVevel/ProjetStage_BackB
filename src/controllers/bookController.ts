@@ -34,7 +34,7 @@ export async function getBookById(req:Request, res:Response){
             res.status(404).json({message: 'Livre non trouvé'});
             return;
         }
-        res.status(200).json({message: 'Livre trouvé', data: book});
+        res.status(200).json( book );
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -72,9 +72,9 @@ export async function getBooksBypostalCode(req: Request, res: Response) {
 
 export async function addBook(req: Request, res: Response) {
     try {
-      const { title, description, author, genre, publishedYear, language, images} = req.body;
+      const { title, description, author, genre, publishedYear, language, state, imageCouverture, imageBack, imageInBook} = req.body;
   
-      if (!title || !description || !author || !genre || !publishedYear || !language) {
+      if (!title || !description || !author || !genre || !publishedYear || !language || !state ||!imageCouverture || !imageBack || !imageInBook) {
         res.status(400).json({ message: 'Champs manquant' });
         return;
       }
@@ -88,7 +88,7 @@ export async function addBook(req: Request, res: Response) {
 
     const owner = user._id;
 
-    const newBook = new BookSchema({ title, description, author, genre, publishedYear, language, owner, images });
+    const newBook = new BookSchema({ title, description, author, genre, publishedYear, language, owner, state, imageCouverture, imageBack, imageInBook });
     const savedBook = await newBook.save();
 
     const userRecord = await UserSchema.findById(owner);
@@ -99,7 +99,7 @@ export async function addBook(req: Request, res: Response) {
     userRecord.booksOwned.push(newBook._id as string);
     await userRecord.save();
   
-      res.status(201).json({ message: 'Livre ajouté avec succès', data: savedBook });
+      res.status(201).json(savedBook);
   
     } catch (err: any) {
       res.status(500).json({ message: 'Erreur interne', error: err.message });
@@ -128,8 +128,8 @@ export async function changeActiveStatus(req:Request, res:Response){
 export async function updateBook(req:Request, res:Response){
     try{
         const {bookId} = req.params;
-        const {title, description, author, genre, publishedYear, language, owner} = req.body;
-        if(!bookId || !title || !description || !author || !genre || !publishedYear || !language ||!owner){
+        const {title, description, author, genre, publishedYear, language, owner, imageCouverture, imageInBook, imageBack} = req.body;
+        if(!bookId || !title || !description || !author || !genre || !publishedYear || !language ||!owner || !imageCouverture || !imageInBook || !imageBack){
             res.status(400).json({message: 'Champs manquant'});
             return;
         }

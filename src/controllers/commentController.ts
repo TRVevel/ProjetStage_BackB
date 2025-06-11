@@ -10,7 +10,7 @@ export async function getAllCommentsByBook(req: Request, res: Response) {
         const { bookId } = req.params;
 
         const comments = await CommentSchema.find({ book_id: bookId });
-        res.status(200).json({ message: 'Liste des commentaires', data: comments });
+        res.status(200).json(comments);
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }

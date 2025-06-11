@@ -7,7 +7,7 @@ import CitySchema from '../DBSchemas/CitySchema';
 export async function getAllUsers(req:Request, res:Response){
     try{
         const users= await UserSchema.find();
-        res.status(200).json({message: 'Liste des utilisateurs', data: users});
+        res.status(200).json(users);
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }

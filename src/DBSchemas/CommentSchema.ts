@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 interface IComment extends Document {
     book_id: string;
+    owner: string;
     title: string;
     comment: string;
     date_création?: Date;
@@ -25,4 +26,4 @@ const CommentSchema: Schema = new Schema({
     date_modification: { type: Date, default: Date.now }
 })
 
-export default mongoose.model<IComment>('City', CommentSchema);
+export default mongoose.model<IComment>('Comment', CommentSchema);
