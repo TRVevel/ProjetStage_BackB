@@ -54,7 +54,6 @@ export async function register(req: Request, res: Response) {
 
 export async function login(req: Request, res: Response) {
     try {
-
         // Validation des données
         const { error } = userLoginValidationSchema.validate(req.body);
         if (error) {
@@ -64,7 +63,8 @@ export async function login(req: Request, res: Response) {
 
         const { email, password } = req.body;
 
-        const user = await UserSchema.findOne({ email });
+        // Recherche insensible à la casse pour l'email
+        const user = await UserSchema.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
         if (!user) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
