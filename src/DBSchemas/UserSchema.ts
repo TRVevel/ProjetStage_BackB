@@ -12,6 +12,8 @@ export interface IUser extends Document {
     email: string;
     booksOwned: string[];
     booksRead: string[];
+    bookReserved: string[];
+    eventReserved: string[];
     hashedPassword: string;
     isActive: boolean;
     lastLogin: Date | null; // Date de la dernière connexion
@@ -35,6 +37,14 @@ const UserSchema: Schema = new Schema({
         ref: "Book",
          default: [] 
         }, // Tableau d'IDs de livres lus
+    bookReserved: { type: [mongoose.Schema.Types.ObjectId],
+        ref: "Book",
+         default: [] 
+        }, 
+    eventReserved: { type: [mongoose.Schema.Types.ObjectId],
+        ref: "Event",
+         default: [] 
+        }, // Tableau d'IDs d'événements réservés
     hashedPassword: { type: String, required: true },
     isActive: { type: Boolean, default: true }, // Par défaut, l'utilisateur est actif
     lastLogin: { type: Date, default: null }, // Date de la dernière connexion

@@ -119,7 +119,7 @@ export async function changeActiveStatus(req:Request, res:Response){
             res.status(404).json({message: 'Livre non trouvé'});
             return 
         }
-        res.status(200).json({message: 'Statut du livre mis à jour avec succès', data: updatedBook});
+        res.status(200).json(updatedBook);
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -138,7 +138,7 @@ export async function updateBook(req:Request, res:Response){
             res.status(404).json({message: 'Livre non trouvé'});
             return 
         }
-        res.status(200).json({message: 'Livre mis à jour avec succès', data: updatedBook});
+        res.status(200).json( updatedBook );
         return;
     }
     catch(err:any){
@@ -176,7 +176,7 @@ export async function deleteBook(req: Request, res: Response) {
             return;
         }
 
-        res.status(200).json({ message: 'Livre supprimé avec succès', data: deletedBook });
+        res.status(200).json(deletedBook);
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }

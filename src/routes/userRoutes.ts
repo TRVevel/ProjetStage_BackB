@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrPostalCode, isActive, updateUser } from "../controllers/userControllers";
+import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrPostalCode, isActive, updateUser, addReservedBook, addreservedEvent, addReadBook } from "../controllers/userControllers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import { isAdmin } from "../middlewares/verifyIsAdmin";
 
@@ -79,7 +79,7 @@ router.get('/users',  getAllUsers);
  *                   type: string
  *                   example: Erreur interne
  */
-router.get('/users/:userId', isAdmin, getUserById);
+router.get('/users/:userId', getUserById);
 
 /**
  * @swagger
@@ -305,6 +305,11 @@ router.put('/users/:userId/active', isAdmin, isActive);
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware, deleteUser);
+
+router.post('/users/:userId/reservedBooks/:bookId', verifyTokenMiddleware, addReservedBook);
+router.post('/users/:userId/reservedEvents/:eventId', verifyTokenMiddleware, addreservedEvent);
+router.post('/users/:userId/readBooks/:bookId', verifyTokenMiddleware, addReadBook);
+
 
 
 export default router;

@@ -5,6 +5,7 @@ import { generateToken} from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
 import BookSchema from '../DBSchemas/BookSchema';
 
+
 export async function register(req: Request, res: Response) {
     try {
 
@@ -38,6 +39,7 @@ export async function register(req: Request, res: Response) {
 
         // Supprimer le mot de passe haché avant de renvoyer l'utilisateur
         savedUser.hashedPassword = '';
+
 
         res.status(201).json({ message: 'Utilisateur créé avec succès', data: savedUser });
     } catch (err: any) {
@@ -85,17 +87,14 @@ export async function login(req: Request, res: Response) {
         const token = generateToken({ _id: user._id, email: user.email, admin: user.admin });
 
         // Stocker le token dans un cookie
-        res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
+        res.cookie("jwt", token, {httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production"
+        });
 
         await user.save();
         res.status(200).json({
             message: 'Connexion réussie',
-            data: {
-                userId: user._id,
-                email: user.email,
-                admin: user.admin,
-                userActivity: user.isActive
-            }
+            token,
+            user
         });
 
     } catch (error: any) {
