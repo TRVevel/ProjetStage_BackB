@@ -27,7 +27,7 @@ export async function getUserById(req:Request, res:Response){
         }
         // Masquer le mot de passe avant de renvoyer les données de l'utilisateur
         user.hashedPassword = '';
-        res.status(200).json({message: 'Utilisateur trouvé', data: user});
+        res.status(200).json(user);
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -67,7 +67,7 @@ export async function getUserByNameOrEmailOrPostalCode(req: Request, res: Respon
         });
 
         // Retourner les utilisateurs trouvés
-        res.status(200).json({ message: 'Utilisateurs trouvés avec succès', data: users });
+        res.status(200).json( users );
     } catch (error: any) {
         res.status(500).json({ message: 'Erreur interne', error: error.message });
     }
