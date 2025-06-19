@@ -77,7 +77,7 @@ export async function getUserByNameOrEmailOrPostalCode(req: Request, res: Respon
 export async function updateUser(req: Request, res: Response) {
     try {
         const userId = req.params.userId || req.params.id;
-        const { name, phone, address, email } = req.body;
+        const {address, city, postalCode, phone } = req.body;
 
         if (!userId) {
             res.status(400).json({ message: 'ID de l\'utilisateur requis' });
@@ -86,10 +86,10 @@ export async function updateUser(req: Request, res: Response) {
 
         // Construire dynamiquement l'objet de mise à jour
         const updateFields: any = {};
-        if (name !== undefined) updateFields.name = name;
+        if (address !== undefined) updateFields.adress = address;
+        if (city !== undefined) updateFields.city = city;
+        if (postalCode !== undefined) updateFields.postalCode = postalCode;
         if (phone !== undefined) updateFields.phone = phone;
-        if (address !== undefined) updateFields.address = address;
-        if (email !== undefined) updateFields.email = email;
 
         const updatedUser = await UserSchema.findByIdAndUpdate(
             userId,
