@@ -30,9 +30,9 @@ const BookSchema: Schema = new Schema({
     publishedYear: { type: Number, required: true },
     language: { type: String,enum: ['french', 'ukrainian', 'english'], required: true},
     state: { type: String,enum: ['new', 'good', 'used'], required: false, default: 'good' },
-    imageCouverture: { type: String, required: true }, 
-    imageBack: { type: String, required: true },
-    imageInBook: { type: String, required: true }, 
+    imageCouverture: { type: String }, 
+    imageBack: { type: String },
+    imageInBook: { type: String }, 
     images: { type: String, default: '' }, // Chemin de l'image du livre, par défaut une chaîne vide
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {
