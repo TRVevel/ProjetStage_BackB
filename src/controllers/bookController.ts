@@ -74,13 +74,13 @@ export async function addBook(req: Request, res: Response) {
     try {
       const { title, description, author, genre, publishedYear, language, state, imageCouverture, imageBack, imageInBook} = req.body;
   
-      if (!title || !description || !author || !genre || !publishedYear || !language || !state ||!imageCouverture || !imageBack || !imageInBook) {
+      if (!title || !description || !author || !genre || !publishedYear || !language || !state || !imageCouverture || !imageBack || !imageInBook) {
         res.status(400).json({ message: 'Champs manquant' });
         return;
       }
   
 // Parse the logged-in user's _id from the decoded token
-    const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
+    const user = req.user
     if (!user || !user._id) {
         res.status(401).json({ message: 'Utilisateur non authentifié' });
         return;
@@ -97,9 +97,10 @@ export async function addBook(req: Request, res: Response) {
         return;
     }
     userRecord.booksOwned.push(newBook._id as string);
+
     await userRecord.save();
   
-      res.status(201).json(savedBook);
+      res.status(201).json({message: 'livre crée avec succès', savedBook});
   
     } catch (err: any) {
       res.status(500).json({ message: 'Erreur interne', error: err.message });

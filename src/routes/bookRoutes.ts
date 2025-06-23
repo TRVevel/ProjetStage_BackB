@@ -177,7 +177,7 @@ router.get('/books/postalCode/:postalCode', getBooksBypostalCode);
  *       500:
  *         description: "Internal server error"
  */
-router.post('/books',verifyTokenMiddleware, addBook);
+router.post('/books', verifyTokenMiddleware, addBook);
 
 /**
  * @swagger
