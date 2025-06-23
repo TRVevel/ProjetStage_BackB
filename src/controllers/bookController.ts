@@ -74,7 +74,7 @@ export async function addBook(req: Request, res: Response) {
     try {
       const { title, description, author, genre, publishedYear, language, state, imageCouverture, imageBack, imageInBook} = req.body;
   
-      if (!title || !description || !author || !genre || !publishedYear || !language || !state ) {
+      if (!title || !description || !author || !genre || !publishedYear || !language || !state || !imageCouverture || !imageBack || !imageInBook) {
         res.status(400).json({ message: 'Champs manquant' });
         return;
       }
