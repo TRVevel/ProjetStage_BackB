@@ -24,7 +24,7 @@ function getAllCommentsByBook(req, res) {
         try {
             const { bookId } = req.params;
             const comments = yield CommentSchema_1.default.find({ book_id: bookId });
-            res.status(200).json({ message: 'Liste des commentaires', data: comments });
+            res.status(200).json(comments);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });

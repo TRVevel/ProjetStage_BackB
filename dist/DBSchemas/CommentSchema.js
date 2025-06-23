@@ -48,4 +48,4 @@ const CommentSchema = new mongoose_1.Schema({
     date_création: { type: Date, default: Date.now },
     date_modification: { type: Date, default: Date.now }
 });
-exports.default = mongoose_1.default.model('City', CommentSchema);
+exports.default = mongoose_1.default.model('Comment', CommentSchema);

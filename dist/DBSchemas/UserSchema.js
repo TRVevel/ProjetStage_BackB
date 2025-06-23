@@ -51,6 +51,14 @@ const UserSchema = new mongoose_1.Schema({
         ref: "Book",
         default: []
     }, // Tableau d'IDs de livres lus
+    bookReserved: { type: [mongoose_1.default.Schema.Types.ObjectId],
+        ref: "Book",
+        default: []
+    },
+    eventReserved: { type: [mongoose_1.default.Schema.Types.ObjectId],
+        ref: "Event",
+        default: []
+    }, // Tableau d'IDs d'événements réservés
     hashedPassword: { type: String, required: true },
     isActive: { type: Boolean, default: true }, // Par défaut, l'utilisateur est actif
     lastLogin: { type: Date, default: null }, // Date de la dernière connexion

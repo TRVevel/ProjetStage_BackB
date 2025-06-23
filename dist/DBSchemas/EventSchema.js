@@ -37,7 +37,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const EventSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
-    images: { type: [String], default: [] },
+    images: { type: String, default: "" },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
     usersInEvent: { type: [String], default: [] },
     eventStartDate: { type: Date, required: true },

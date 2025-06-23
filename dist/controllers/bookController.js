@@ -58,7 +58,7 @@ function getBookById(req, res) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            res.status(200).json({ message: 'Livre trouvé', data: book });
+            res.status(200).json(book);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
@@ -96,19 +96,19 @@ function getBooksBypostalCode(req, res) {
 function addBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { title, description, author, genre, publishedYear, language, images } = req.body;
-            if (!title || !description || !author || !genre || !publishedYear || !language) {
+            const { title, description, author, genre, publishedYear, language, state, imageCouverture, imageBack, imageInBook } = req.body;
+            if (!title || !description || !author || !genre || !publishedYear || !language || !state || !imageCouverture || !imageBack || !imageInBook) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
             // Parse the logged-in user's _id from the decoded token
-            const user = req.headers.user ? JSON.parse(req.headers.user) : null;
+            const user = req.user;
             if (!user || !user._id) {
                 res.status(401).json({ message: 'Utilisateur non authentifié' });
                 return;
             }
             const owner = user._id;
-            const newBook = new BookSchema_1.default({ title, description, author, genre, publishedYear, language, owner, images });
+            const newBook = new BookSchema_1.default({ title, description, author, genre, publishedYear, language, owner, state, imageCouverture, imageBack, imageInBook });
             const savedBook = yield newBook.save();
             const userRecord = yield UserSchema_1.default.findById(owner);
             if (!userRecord) {
@@ -117,7 +117,7 @@ function addBook(req, res) {
             }
             userRecord.booksOwned.push(newBook._id);
             yield userRecord.save();
-            res.status(201).json({ message: 'Livre ajouté avec succès', data: savedBook });
+            res.status(201).json({ message: 'livre crée avec succès', savedBook });
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
@@ -138,7 +138,7 @@ function changeActiveStatus(req, res) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            res.status(200).json({ message: 'Statut du livre mis à jour avec succès', data: updatedBook });
+            res.status(200).json(updatedBook);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
@@ -149,8 +149,8 @@ function updateBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { bookId } = req.params;
-            const { title, description, author, genre, publishedYear, language, owner } = req.body;
-            if (!bookId || !title || !description || !author || !genre || !publishedYear || !language || !owner) {
+            const { title, description, author, genre, publishedYear, language, owner, imageCouverture, imageInBook, imageBack } = req.body;
+            if (!bookId || !title || !description || !author || !genre || !publishedYear || !language || !owner || !imageCouverture || !imageInBook || !imageBack) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
@@ -159,7 +159,7 @@ function updateBook(req, res) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            res.status(200).json({ message: 'Livre mis à jour avec succès', data: updatedBook });
+            res.status(200).json(updatedBook);
             return;
         }
         catch (err) {
@@ -193,7 +193,7 @@ function deleteBook(req, res) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            res.status(200).json({ message: 'Livre supprimé avec succès', data: deletedBook });
+            res.status(200).json(deletedBook);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });

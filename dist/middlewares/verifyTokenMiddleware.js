@@ -9,7 +9,7 @@ const JWTUtils_1 = require("../utils/JWTUtils");
 dotenv_1.default.config();
 const SECRET_KEY = process.env.JWT_KEY;
 function verifyTokenMiddleware(req, res, next) {
-    if (SECRET_KEY === undefined) {
+    if (!SECRET_KEY) {
         throw new Error('SECRET KEY is not defined');
     }
     const cookie = req.headers.cookie;
@@ -18,21 +18,20 @@ function verifyTokenMiddleware(req, res, next) {
         return;
     }
     const token = cookie.split('=')[1];
-    console.log(token);
     if (!token) {
-        res.status(401).json({ message: 'Vous devez être connecté pour accéder à cette ressource' });
+        res.status(401).json({ message: 'Token manquant' });
         return;
     }
     try {
         const decoded = (0, JWTUtils_1.verifyToken)(token);
-        req.headers.user = JSON.stringify(decoded);
-        next();
         if (!decoded) {
-            res.status(403).send({ message: 'Token Invalide ou Expiré' });
+            res.status(403).json({ message: 'Token invalide ou expiré' });
+            return;
         }
+        req.user = decoded; // ✅ Bonne pratique : attacher à req.user
+        next();
     }
     catch (error) {
-        res.status(401).send({ message: 'Vous n\'êtes pas autorisé à accéder à cette ressource' });
-        return;
+        res.status(401).json({ message: 'Token invalide' });
     }
 }
