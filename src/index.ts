@@ -35,7 +35,10 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+// Autoriser jusqu'à 5 Mo pour les requêtes JSON et urlencoded
+app.use(express.json({ limit: '5mb' }));
+app.use(express.urlencoded({ limit: '5mb', extended: true }));
+
 // Connecter MongoDB
 const connectDB = async () => {
     try {
