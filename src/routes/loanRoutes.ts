@@ -52,7 +52,7 @@ const router = Router();
  *                   type: string
  *                   example: [description de l'erreur]
  */
-router.get('/loans',isAdmin, getAllLoans);
+router.get('/loans', getAllLoans);
 
 /**
  * @swagger

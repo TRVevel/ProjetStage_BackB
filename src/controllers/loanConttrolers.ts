@@ -17,12 +17,12 @@ export async function addLoan(req:Request, res:Response){
         const {bookId}= req.params;
         const { startDate, endDate}= req.body;
 
-        const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
-                if (!user || !user._id) {
-                    res.status(401).json({ message: 'Utilisateur non authentifié' });
-                    return;
-                }
-                const userId = user._id;
+       const user = req.user;
+        if (!user || !user._id) {
+            res.status(401).json({ message: 'Utilisateur non authentifié' });
+            return;
+        }
+        const userId = user._id;
 
         if(!bookId || !userId || !startDate || !endDate){
             res.status(400).json({message: 'Champs manquant'});
