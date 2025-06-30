@@ -67,7 +67,8 @@ function login(req, res) {
                 return;
             }
             const { email, password } = req.body;
-            const user = yield UserSchema_1.default.findOne({ email });
+            // Recherche insensible à la casse pour l'email
+            const user = yield UserSchema_1.default.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
             if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
                 return;
@@ -87,16 +88,13 @@ function login(req, res) {
             // Générer un token avec les informations de l'utilisateur
             const token = (0, JWTUtils_1.generateToken)({ _id: user._id, email: user.email, admin: user.admin });
             // Stocker le token dans un cookie
-            res.cookie('jwt', token, { httpOnly: true, sameSite: 'strict' });
+            res.cookie("jwt", token, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production"
+            });
             yield user.save();
             res.status(200).json({
                 message: 'Connexion réussie',
-                data: {
-                    userId: user._id,
-                    email: user.email,
-                    admin: user.admin,
-                    userActivity: user.isActive
-                }
+                token,
+                user
             });
         }
         catch (error) {

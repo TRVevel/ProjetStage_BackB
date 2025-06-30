@@ -43,7 +43,9 @@ app.use((0, cors_1.default)({
     origin: 'http://localhost:4200',
     credentials: true
 }));
-app.use(express_1.default.json());
+// Autoriser jusqu'à 5 Mo pour les requêtes JSON et urlencoded
+app.use(express_1.default.json({ limit: '100mb' }));
+app.use(express_1.default.urlencoded({ limit: '100mb', extended: true }));
 // Connecter MongoDB
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

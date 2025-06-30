@@ -38,11 +38,14 @@ const mongoose_1 = __importStar(require("mongoose"));
 const BookSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
-    genre: { type: String, required: true },
+    genre: { type: String, enum: ['fantasy', 'science-fiction', 'romance', 'mystery', 'non-fiction', 'historical', 'thriller', 'horror', 'biography', 'self-help', "children's", 'young adult', 'poetry', 'classics', 'manga', 'comics', 'adventure', 'educative', 'cookbook', 'travel', 'humor'], required: true }, // Genre du livre
     author: { type: String, required: true },
     publishedYear: { type: Number, required: true },
     language: { type: String, enum: ['french', 'ukrainian', 'english'], required: true },
-    state: { type: String, enum: ['new', 'good', 'used'], required: false },
+    state: { type: String, enum: ['new', 'good', 'used'], required: false, default: 'good' },
+    imageCouverture: { type: String, required: true },
+    imageBack: { type: String, required: true },
+    imageInBook: { type: String, required: true },
     images: { type: String, default: '' }, // Chemin de l'image du livre, par défaut une chaîne vide
     readBy: { type: [String], default: [] }, // Tableau d'IDs de livres lus
     owner: {

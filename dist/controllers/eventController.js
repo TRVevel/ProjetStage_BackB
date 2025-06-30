@@ -22,7 +22,7 @@ function getAllEvents(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const event = yield EventSchema_1.default.find();
-            res.status(200).json({ message: "Liste des événements", data: event });
+            res.status(200).json(event);
         }
         catch (err) {
             res.status(500).json({ message: "Erreur interne", error: err.message });

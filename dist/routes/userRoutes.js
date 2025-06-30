@@ -78,7 +78,7 @@ router.get('/users', userControllers_1.getAllUsers);
  *                   type: string
  *                   example: Erreur interne
  */
-router.get('/users/:userId', verifyIsAdmin_1.isAdmin, userControllers_1.getUserById);
+router.get('/users/:userId', userControllers_1.getUserById);
 /**
  * @swagger
  * /api/users/search/{query}:
@@ -300,4 +300,7 @@ router.put('/users/:userId/active', verifyIsAdmin_1.isAdmin, userControllers_1.i
  *                   example: Erreur interne
  */
 router.delete('/users/:userId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.deleteUser);
+router.post('/users/:userId/reservedBooks/:bookId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.addReservedBook);
+router.post('/users/:userId/reservedEvents/:eventId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.addreservedEvent);
+router.post('/users/:userId/readBooks/:bookId', verifyTokenMiddleware_1.verifyTokenMiddleware, userControllers_1.addReadBook);
 exports.default = router;
