@@ -17,33 +17,39 @@ interface CustomRequest extends Request {
     user?: any; // ou une interface UserToken
   }
 
-export function verifyTokenMiddleware(req: CustomRequest, res: Response, next: NextFunction): void {
+  export function verifyTokenMiddleware(req: CustomRequest, res: Response, next: NextFunction): void {
     if (!SECRET_KEY) {
-        throw new Error('SECRET KEY is not defined');
-      }
-    
-      const cookie = req.headers.cookie;
-      if (!cookie) {
-        res.status(401).json({ message: 'Vous devez être connecté pour accéder à cette ressource' });
-        return;
-      }
-    
-      const token = cookie.split('=')[1];
-      if (!token) {
-        res.status(401).json({ message: 'Token manquant' });
-        return;
-      }
-    
-      try {
-        const decoded = verifyToken(token);
-        if (!decoded) {
-          res.status(403).json({ message: 'Token invalide ou expiré' });
-          return
-        }
-    
-        req.user = decoded; // ✅ Bonne pratique : attacher à req.user
-        next();
-      } catch (error) {
-        res.status(401).json({ message: 'Token invalide' });
-      }
+      throw new Error('SECRET KEY is not defined');
     }
+  
+    // Vérifie d'abord dans Authorization header
+    let token = '';
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } 
+    // Sinon, tente depuis les cookies
+    else if (req.headers.cookie) {
+      token = req.headers.cookie.split('=')[1];
+    }
+  
+    if (!token) {
+      res.status(401).json({ message: 'Token manquant' });
+      return
+    }
+  
+    try {
+      const decoded = verifyToken(token);
+      if (!decoded || typeof decoded === 'string') {
+        res.status(403).json({ message: 'Token invalide ou expiré' });
+        return
+      }
+  
+      req.user = decoded;
+      next();
+    } catch (error) {
+      res.status(401).json({ message: 'Erreur de vérification du token', error });
+      return
+    }
+  }
+  

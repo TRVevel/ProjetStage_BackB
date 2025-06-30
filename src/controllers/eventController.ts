@@ -35,7 +35,7 @@ export async function createEvent(req: Request, res: Response) {
             eventStartDate,
             eventEndDate,
         });
-        res.status(201).json({ message: "Événement créé", data: event });
+        res.status(201).json(event);
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }

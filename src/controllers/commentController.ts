@@ -55,36 +55,41 @@ export async function getAllCommentByUser(req: Request, res: Response) {
 
 export async function createComment(req: Request, res: Response) {
     try {
-        // Validation des champs
-        const { comment, title } = req.body;
-        const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
-        const book = req.params.bookId;
-        
-        if(!comment ){
-            res.status(400).send('Le commentaire est incomplet.');
-            return 
-        }
-        if (!user) {
-            res.status(403).json({ message: "Utilisateur non valide." });
-            return
-        }
-        
-        if (!book) {
-            res.status(400).json({ message: "Le livre avec cet ID n'existe pas." });
-            return
-        }
-
-
-        const commentUser = new CommentSchema({ book_id: book, owner: user,  title, comment })
-        const savedComment = await commentUser.save();
-        res.status(200).json({message: 'Livre trouvé', data: savedComment});
+      const { comment, title } = req.body;
+      const bookId = req.params.bookId;
+  
+      // ✅ L'utilisateur connecté est injecté par le middleware
+      const user = req.user;
+  
+      if (!comment || !title) {
+        res.status(400).json({ message: "Le titre et le commentaire sont requis." });
+        return
+      }
+  
+      if (!user || !user._id) {
+        res.status(401).json({ message: "Utilisateur non authentifié." });
+        return
+      }
+  
+      if (!bookId) {
+        res.status(400).json({ message: "L'identifiant du livre est requis." });
+        return
+      }
+  
+      const commentToSave = new CommentSchema({
+        book_id: bookId,
+        owner: user._id,
+        title,
+        comment,
+      });
+  
+      const savedComment = await commentToSave.save();
+      res.status(201).json({ message: "Commentaire créé avec succès.", data: savedComment });
     } catch (err: any) {
-        // Gestion des erreurs
-        res.status(500).json({ message: 'Erreur interne', error: err.message });
-        
+      res.status(500).json({ message: "Erreur interne", error: err.message });
     }
-}
-
+  }
+  
 
 export async function modifyComment(req: Request, res: Response) {
     try {
