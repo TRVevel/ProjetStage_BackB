@@ -26,12 +26,21 @@ interface CustomRequest extends Request {
     let token = '';
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
+      console.log('TOKEN:', token);
       token = authHeader.split(' ')[1];
     } 
     // Sinon, tente depuis les cookies
     else if (req.headers.cookie) {
-      token = req.headers.cookie.split('=')[1];
-    }
+  console.log('Cookies:', req.headers.cookie);
+  console.log('req.headers.cookie:', req.headers.cookie);
+  // Recherche le cookie nommé jwt
+  const cookies = req.headers.cookie.split(';').map(c => c.trim());
+  const jwtCookie = cookies.find(c => c.startsWith('jwt='));
+  if (jwtCookie) {
+    token = jwtCookie.split('=')[1];
+    console.log('TOKEN:', token);
+  }
+}
   
     if (!token) {
       res.status(401).json({ message: 'Token manquant' });
