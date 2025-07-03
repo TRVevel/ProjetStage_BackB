@@ -5,27 +5,31 @@ import { generateToken} from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
 import BookSchema from '../DBSchemas/BookSchema';
 
-
 export async function register(req: Request, res: Response) {
     try {
-
         // Validation des données d'entrée avec Joi
         const { error } = userValidationSchema.validate(req.body);
-        
+
         if (error) {
-            // Si la validation échoue, on retourne les erreurs
-           res.status(400).json({ message: 'Erreur de validation', details: error.details });
-           return ;
+            res.status(400).json({
+                message: 'Erreur de validation des champs.',
+                errors: error.details.map((err: any) => ({
+                    field: err.path.join('.'),
+                    message: err.message
+                }))
+            });
+            return;
         }
 
-        
         const { name, phone, address, city, postalCode, email, password } = req.body;
-        
-        // Vérifier si un client avec le même email existjà (gestion de duplication)
-        const existingCustomer = await UserSchema.findOne({ where: { email } });
-        if (existingCustomer) {
-            res.status(400).json({ message: 'Ce customer existe déjà !' });
-            return ;
+
+        // Vérifier si un utilisateur avec le même email existe déjà
+        const existingUser = await UserSchema.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+        if (existingUser) {
+            res.status(409).json({
+                message: 'Un utilisateur avec cet email existe déjà.'
+            });
+            return;
         }
 
         // Hashage du mot de passe
@@ -40,17 +44,35 @@ export async function register(req: Request, res: Response) {
         // Supprimer le mot de passe haché avant de renvoyer l'utilisateur
         savedUser.hashedPassword = '';
 
-
-        res.status(201).json({ message: 'Utilisateur créé avec succès', data: savedUser });
+        res.status(201).json({
+            message: 'Utilisateur créé avec succès.',
+            user: {
+                _id: savedUser._id,
+                name: savedUser.name,
+                phone: savedUser.phone,
+                address: savedUser.address,
+                city: savedUser.city,
+                postalCode: savedUser.postalCode,
+                email: savedUser.email
+            }
+        });
+        return;
     } catch (err: any) {
+        // Gestion des erreurs MongoDB (duplication, etc.)
         if (err.code === 11000) {
-            res.status(400).json({ message: 'Cet Email est déjà utilisé' });
+            res.status(409).json({
+                message: 'Cet email est déjà utilisé.'
+            });
             return;
         }
-        res.status(500).json({ message: 'Erreur interne', error: err.message });
+        // Erreur inattendue
+        res.status(500).json({
+            message: 'Erreur interne du serveur.',
+            error: err.message
+        });
+        return;
     }
 }
-
 
 export async function login(req: Request, res: Response) {
     try {
@@ -96,19 +118,22 @@ export async function login(req: Request, res: Response) {
             token,
             user
         });
+        return;
 
     } catch (error: any) {
         res.status(500).json({ message: error.message });
+        return;
     }
 }
-
 
 export async function logout(req: Request, res: Response) {
     try {
         res.clearCookie('jwt');
         res.status(200).json({ message: 'Déconnexion réussie' });
+        return;
     } catch (error: any) {
         res.status(500).json({ message: error.message });
+        return;
     }
 }
 
@@ -148,7 +173,9 @@ export async function passwordChange(req: Request, res: Response) {
         await existingUser.save();
 
         res.status(200).json({ message: 'Mot de passe mis à jour avec succès' });
+        return;
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
+        return;
     }
 }

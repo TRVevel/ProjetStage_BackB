@@ -10,10 +10,17 @@ export const userValidationSchema = Joi.object({
     email: Joi.string().email().required().messages({
         'string.email': '"email" doit être une adresse email valide.',
     }),
-    phone: Joi.string().min(10).max(15).messages({
-        'string.min': '"phone" doit comporter au moins 10 caractères.',
-        'string.max': '"phone" doit comporter au maximum 15 caractères.',
-    }),
+    phone: Joi.string()
+        .allow('')
+        .empty('')
+        .when(Joi.string().min(1), {
+            then: Joi.string().min(10).max(15),
+            otherwise: Joi.string().allow('').empty(''),
+        })
+        .messages({
+            'string.min': '"phone" doit comporter au moins 10 caractères.',
+            'string.max': '"phone" doit comporter au maximum 15 caractères.',
+        }),
     address: Joi.string().min(10).max(255).required().messages({
         'string.min': '"adress" doit comporter au moins 10 caractères.',
         'string.max': '"adress" doit comporter au maximum 255 caractères.',
