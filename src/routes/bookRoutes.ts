@@ -29,7 +29,7 @@ const router = Router();
  *       500:
  *         description: "Internal server error"
  */
-router.get('/books', isAdmin, getAllBooks);
+router.get('/books', getAllBooks);
 
 /**
  * @swagger

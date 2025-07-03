@@ -23,9 +23,11 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
         res.status(403).json({ message: 'Token invalide' });
         return
     }
-    if (decoded.admin !==  true) {
-        res.status(403).json({ message: 'Accès refusé, vous n\'êtes pas admin2', data: decoded });
+
+    if (decoded.admin == true) {
+        res.status(403).json({ message: 'Accès interdit, vous devez être admin pour accéder à cette ressource' });
         return
     }
+
     next();
 }

@@ -256,7 +256,7 @@ router.put('/users/:userId', verifyTokenMiddleware, updateUser);
  *                   type: string
  *                   example: Erreur interne
  */
-router.put('/users/:userId/active', isAdmin, isActive);
+router.put('/users/:userId/active', isActive);
 
 /**
  * @swagger
@@ -304,7 +304,7 @@ router.put('/users/:userId/active', isAdmin, isActive);
  *                   type: string
  *                   example: Erreur interne
  */
-router.delete('/users/:userId', isAdmin, deleteUser);
+router.delete('/users/:userId', deleteUser);
 
 router.post('/users/:userId/reservedBooks/:bookId', verifyTokenMiddleware, addReservedBook);
 router.post('/users/:userId/reservedEvents/:eventId', verifyTokenMiddleware, addreservedEvent);

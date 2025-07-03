@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import BookSchema from "../DBSchemas/BookSchema";
 import UserSchema from '../DBSchemas/UserSchema';
 import LoanSchema from '../DBSchemas/LoanSchema';
+import { Types } from 'mongoose';
 
 export async function getAllBooks(req:Request, res:Response){
     try{
         const books= await BookSchema.find();
-        res.status(200).json({message: 'Liste des livres', data: books});
+        res.status(200).json({message: 'Liste des livres', books});
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -157,11 +158,21 @@ export async function deleteBook(req: Request, res: Response) {
         }
 
         // Vérifier si le livre est présent dans le tableau booksRead de n'importe quel utilisateur
-        const usersWithBookRead = await UserSchema.find({ booksRead: bookId });
-        if (usersWithBookRead.length > 0) {
-            res.status(400).json({ message: 'Le livre est encore marqué comme lu par des utilisateurs' });
-            return;
+
+        const objectId = new Types.ObjectId(bookId);
+
+        const usersWithBookRead = await UserSchema.find({ booksRead: objectId });
+        const usersWithBookReserved = await UserSchema.find({ booksReserved: { $in: [objectId, bookId] } });
+        if (usersWithBookRead.length > 0 || usersWithBookReserved.length > 0) {
+            const updatedBook = await BookSchema.findByIdAndUpdate(
+                bookId,
+                { $set: { isActive: false } },
+                { new: true }
+            );
+            res.status(200).json({ message: 'Livre marqué comme inactif', data: updatedBook });
+            return
         }
+
 
         // Vérifier si le livre est présent dans un emprunt
         const loansWithBook = await LoanSchema.find({ bookId });
@@ -177,7 +188,7 @@ export async function deleteBook(req: Request, res: Response) {
             return;
         }
 
-        res.status(200).json(deletedBook);
+        res.status(200).json({message: "Livre effacé avec succès" , deletedBook});
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }

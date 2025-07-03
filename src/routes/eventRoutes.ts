@@ -1,6 +1,7 @@
 import {Router} from "express";
 import { createEvent, getEventById, getAllEvents, updateEvent, deleteEvent } from "../controllers/eventController";
 import { isAdmin } from "../middlewares/verifyIsAdmin";
+import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 
 const router = Router();
 
@@ -129,7 +130,7 @@ router.get('/events/:eventId', getEventById);
  *       500:
  *         description: Erreur interne
  */
-router.post('/events', createEvent);
+router.post('/events', verifyTokenMiddleware, createEvent);
 
 /**
  * @swagger

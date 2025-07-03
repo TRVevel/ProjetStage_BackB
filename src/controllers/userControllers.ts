@@ -109,21 +109,19 @@ export async function updateUser(req: Request, res: Response) {
 }
 export async function isActive(req: Request, res: Response) {
     try {
-        const userId = req.params.id;
-        const { isActive } = req.body;
+        const userId = req.params.userId;
+        const user = await UserSchema.findById(userId);
+        
 
-        const updatedUser = await UserSchema.findByIdAndUpdate(
-            userId,
-            { $set: { isActive } },
-            { new: true }
-        );
-
-        if (!updatedUser) {
+        if (!user) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
         }
+        user.isActive = !user.isActive;
+        
+        await user.save({ validateBeforeSave: false });
 
-        res.status(200).json({ message: 'Statut de l\'utilisateur mis à jour avec succès', data: updatedUser });
+        res.status(200).json( user );
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
@@ -164,6 +162,7 @@ export async function deleteUser(req: Request, res: Response) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
+
 
 export async function addReservedBook(req: Request, res: Response) {
     try {
