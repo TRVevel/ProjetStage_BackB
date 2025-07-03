@@ -130,7 +130,7 @@ router.get('/events/:eventId', getEventById);
  *       500:
  *         description: Erreur interne
  */
-router.post('/events', verifyTokenMiddleware, createEvent);
+router.post('/events',isAdmin, createEvent);
 
 /**
  * @swagger
