@@ -7,7 +7,7 @@ import EventSchema from "../DBSchemas/EventSchema";
 export async function getAllEvents(req: Request, res: Response) {
     try {
         const events = await EventSchema.find();
-        res.status(200).json({ message: "Liste des événements", data: events });
+        res.status(200).json(events);
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }
