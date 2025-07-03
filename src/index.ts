@@ -12,70 +12,66 @@ import loanRoutes from "./routes/loanRoutes";
 import eventRoutes from "./routes/eventRoutes";
 import commentRoute from "./routes/commentRoute";
 import cityDbRoutes from "./routes/cityDbRoutes";
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 
-// Cloudinary configuration
-cloudinary.config({
-  cloud_name: 'dhsf409o1',
-  api_key: '317442182697478',
-  api_secret: 'x37XaPmNXdQKa9huxGq2MJ8_R-A'
-});
-
-
-//-------------------------------------------------------------------------------------------
+// Chargement des variables d'environnement
+dotenv.config();
 
 const app = express();
-dotenv.config();
-console.log(process.env.MONGO_URI);
-const PORT = process.env.PORT;
-console.log(PORT);
+const PORT = process.env.PORT || 3000;
 
+// Configuration Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dhsf409o1',
+  api_key: process.env.CLOUDINARY_API_KEY || '317442182697478',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'x37XaPmNXdQKa9huxGq2MJ8_R-A'
+});
+
+// Middleware CORS
 app.use(cors({
   origin: 'http://localhost:4200',
   credentials: true
 }));
 
-// Autoriser jusqu'à 5 Mo pour les requêtes JSON et urlencoded
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ limit: '100mb', extended: true }));
+// Middleware pour parser les requêtes JSON et urlencoded (jusqu'à 100 Mo)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Connecter MongoDB
+ /**
+ * Connexion à MongoDB et démarrage du cron d'activité utilisateur
+ */
 const connectDB = async () => {
-    try {
-        await mongoose
-  .connect(process.env.MONGO_URI as string, )
-  .then(() => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI as string);
     console.log("✅ Connecté à MongoDB");
-
-    // Démarrer le cron **après** la connexion réussie
+    // Démarrer le cron après la connexion réussie
     startUserActivityCron();
-  })
-  .catch((err) => {
-    console.error("❌ Erreur de connexion MongoDB :", err);
-  });
-    console.log('MongoDB connecté avec succès');
-    } catch (err) {
-    console.error('Erreur lors de la connexion à MongoDB:', err);
+  } catch (err) {
+    console.error('❌ Erreur lors de la connexion à MongoDB:', err);
     process.exit(1);
-    }
-    };
+  }
+};
+connectDB();
 
-    connectDB();
-    app.get('/api-docs.json', (req, res) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.send(swaggerDocs);
-    });
-    app.use('/api/auth', authRoutes);
-    app.use('/api', userRoutes);
-    app.use('/api', bookRoutes);
-    app.use('/api', loanRoutes);
-    app.use('/api', eventRoutes)
-    app.use('/api', commentRoute)
-    app.use('/api', cityDbRoutes)
-    
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-    
+// Route pour exposer la documentation Swagger au format JSON
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerDocs);
+});
 
-app.listen(3000, () => {
-    console.log('Server is running on port :',PORT);
+// Déclaration des routes principales
+app.use('/api/auth', authRoutes);
+app.use('/api', userRoutes);
+app.use('/api', bookRoutes);
+app.use('/api', loanRoutes);
+app.use('/api', eventRoutes);
+app.use('/api', commentRoute);
+app.use('/api', cityDbRoutes);
+
+// Documentation Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Démarrage du serveur
+app.listen(PORT, () => {
+  console.log('🚀 Server is running on port:', PORT);
 });

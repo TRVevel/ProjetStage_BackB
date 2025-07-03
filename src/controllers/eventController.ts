@@ -1,29 +1,46 @@
 import { Request, Response } from "express";
 import EventSchema from "../DBSchemas/EventSchema";
 
+/**
+ * Récupère tous les événements
+ */
 export async function getAllEvents(req: Request, res: Response) {
     try {
-        const event = await EventSchema.find()
-        res.status(200).json(event);
+        const events = await EventSchema.find();
+        res.status(200).json({ message: "Liste des événements", data: events });
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }
 }
 
+/**
+ * Récupère un événement par son ID
+ */
 export async function getEventById(req: Request, res: Response) {
     try {
         const { eventId } = req.params;
-        const event = await EventSchema.findById(eventId)
-        res.status(200).json({ message: "Liste des événements", data: event });
+        if (!eventId) {
+            res.status(400).json({ message: "ID de l'événement requis" });
+            return;
+        }
+        const event = await EventSchema.findById(eventId);
+        if (!event) {
+            res.status(404).json({ message: "Événement non trouvé" });
+            return;
+        }
+        res.status(200).json({ message: "Événement trouvé", data: event });
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }
 }
 
+/**
+ * Crée un nouvel événement
+ */
 export async function createEvent(req: Request, res: Response) {
     try {
         const { title, description, images, language, eventStartDate, eventEndDate } = req.body;
-        if (!title || !description  || !language || !eventStartDate || !eventEndDate) {
+        if (!title || !description || !language || !eventStartDate || !eventEndDate) {
             res.status(400).json({ message: "Champs manquant" });
             return;
         }
@@ -35,12 +52,15 @@ export async function createEvent(req: Request, res: Response) {
             eventStartDate,
             eventEndDate,
         });
-        res.status(201).json(event);
+        res.status(201).json({ message: "Événement créé", data: event });
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }
 }
 
+/**
+ * Met à jour un événement existant
+ */
 export async function updateEvent(req: Request, res: Response) {
     try {
         const { eventId } = req.params;
@@ -49,29 +69,45 @@ export async function updateEvent(req: Request, res: Response) {
             res.status(400).json({ message: "Champs manquant" });
             return;
         }
-        const event = await EventSchema.findByIdAndUpdate(eventId, {
-            title,
-            description,
-            images,
-            creator,
-            language,
-            usersInEvent: [],
-            eventStartDate,
-            eventEndDate,
-        });
+        const event = await EventSchema.findByIdAndUpdate(
+            eventId,
+            {
+                title,
+                description,
+                images,
+                creator,
+                language,
+                usersInEvent,
+                eventStartDate,
+                eventEndDate,
+            },
+            { new: true }
+        );
+        if (!event) {
+            res.status(404).json({ message: "Événement non trouvé" });
+            return;
+        }
         res.status(200).json({ message: "Événement mis à jour", data: event });
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });
     }
 }
 
+/**
+ * Supprime un événement par son ID
+ */
 export async function deleteEvent(req: Request, res: Response) {
     try {
         const { eventId } = req.params;
         if (!eventId) {
-            res.status(400).json({ message: "ID inconnu" });
+            res.status(400).json({ message: "ID de l'événement requis" });
+            return;
         }
         const event = await EventSchema.findByIdAndDelete(eventId);
+        if (!event) {
+            res.status(404).json({ message: "Événement non trouvé" });
+            return;
+        }
         res.status(200).json({ message: "Événement supprimé", data: event });
     } catch (err: any) {
         res.status(500).json({ message: "Erreur interne", error: err.message });

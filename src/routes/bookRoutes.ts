@@ -1,7 +1,16 @@
 import { Router } from "express";
-import { addBook, changeActiveStatus, deleteBook, getAllBooks, getAllBooksByActiveAndOwnerActive, getBookById, getBooksBypostalCode, reactivateBook, updateBook } from "../controllers/bookController";
+import {
+    addBook,
+    changeActiveStatus,
+    deleteBook,
+    getAllBooks,
+    getAllBooksByActiveAndOwnerActive,
+    getBookById,
+    getBooksBypostalCode,
+    reactivateBook,
+    updateBook
+} from "../controllers/bookController";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
-import { isAdmin } from "../middlewares/verifyIsAdmin";
 
 const router = Router();
 
@@ -11,10 +20,10 @@ const router = Router();
  *   get:
  *     tags:
  *       - Books
- *     summary: "Get all books"
+ *     summary: Get all books
  *     responses:
  *       200:
- *         description: "List of all books"
+ *         description: List of all books
  *         content:
  *           application/json:
  *             schema:
@@ -27,7 +36,7 @@ const router = Router();
  *                   items:
  *                     $ref: '#/components/schemas/Book'
  *       500:
- *         description: "Internal server error"
+ *         description: Internal server error
  */
 router.get('/books', getAllBooks);
 
@@ -37,10 +46,10 @@ router.get('/books', getAllBooks);
  *   get:
  *     tags:
  *       - Books
- *     summary: "Get all active books"
+ *     summary: Get all active books
  *     responses:
  *       200:
- *         description: "List of all active books"
+ *         description: List of all active books
  *         content:
  *           application/json:
  *             schema:
@@ -53,40 +62,40 @@ router.get('/books', getAllBooks);
  *                   items:
  *                     $ref: '#/components/schemas/Book'
  */
-
 router.get('/books/active', getAllBooksByActiveAndOwnerActive);
 
 /**
-* @swagger
-* /api/books/{bookId}:
-*   get:
-*     tags:
-*       - Books
-*     summary: "Get a book by ID"
-*     parameters:
-*       - in: path
-*         name: bookId
-*         required: true
-*         schema:
-*           type: string
-*         description: "The ID of the book to retrieve"
-*     responses:
-*       200:
-*         description: "Book retrieved successfully"
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 message:
-*                   type: string
-*                 data:
-*                   $ref: '#/components/schemas/Book'
-*       404:
-*         description: "Book not found"
-*       500:
-*         description: "Internal server error"
-*/
+ * @swagger
+ * /api/books/{bookId}:
+ *   get:
+ *     tags:
+ *       - Books
+ *     summary: Get a book by ID
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df23"
+ *         description: The ID of the book to retrieve
+ *     responses:
+ *       200:
+ *         description: Book retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   $ref: '#/components/schemas/Book'
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/books/:bookId', getBookById);
 
 /**
@@ -95,17 +104,18 @@ router.get('/books/:bookId', getBookById);
  *   get:
  *     tags:
  *       - Books
- *     summary: "Get books by postalCode"
+ *     summary: Get books by postalCode
  *     parameters:
  *       - in: path
  *         name: postalCode
  *         required: true
  *         schema:
  *           type: string
- *         description: "The postalCode to filter books by"
+ *         example: "54000"
+ *         description: The postalCode to filter books by
  *     responses:
  *       200:
- *         description: "Books retrieved successfully"
+ *         description: Books retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -118,12 +128,11 @@ router.get('/books/:bookId', getBookById);
  *                   items:
  *                     $ref: '#/components/schemas/Book'
  *       404:
- *         description: "No books found for this postalCode"
+ *         description: No books found for this postalCode
  *       500:
- *         description: "Internal server error"
+ *         description: Internal server error
  */
 router.get('/books/postalCode/:postalCode', getBooksBypostalCode);
-
 
 /**
  * @swagger
@@ -131,7 +140,7 @@ router.get('/books/postalCode/:postalCode', getBooksBypostalCode);
  *   post:
  *     tags:
  *       - Books
- *     summary: "Add a new book"
+ *     summary: Add a new book
  *     requestBody:
  *       required: true
  *       content:
@@ -300,6 +309,29 @@ router.put('/books/changeActive/:bookId',verifyTokenMiddleware, changeActiveStat
  *         description: "Internal server error"
  */
 router.delete('/books/:bookId', deleteBook);
+/**
+ * @swagger
+ * /api/books/{bookId}/reactivate:
+ *   put:
+ *     tags:
+ *       - Books
+ *     summary: Reactivate a book by ID
+ *     parameters:
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df23"
+ *         description: The ID of the book to reactivate
+ *     responses:
+ *       200:
+ *         description: Book reactivated successfully
+ *       404:
+ *         description: Book not found
+ *       500:
+ *         description: Internal server error
+ */
 router.put('/books/:bookId/reactivate',  reactivateBook);
 
 

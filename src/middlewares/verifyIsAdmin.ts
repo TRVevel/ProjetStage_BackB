@@ -1,7 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../utils/JWTUtils";
-import UserSchema from "../DBSchemas/UserSchema";
 
+/**
+ * Middleware pour vérifier si l'utilisateur est administrateur.
+ * - Récupère le token JWT depuis les cookies.
+ * - Vérifie la validité du token et la propriété admin.
+ * - Retourne une erreur 401/403 si non autorisé, sinon passe au middleware suivant.
+ */
 export function isAdmin(req: Request, res: Response, next: NextFunction) {
     // Récupération du token depuis le cookie (compatible avec plusieurs cookies)
     const cookieHeader = req.headers.cookie;
@@ -18,6 +23,7 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
+    // Vérification et décodage du token
     const decoded = verifyToken(token);
 
     if (!decoded || typeof decoded === 'string') {
@@ -25,10 +31,12 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
+    // Vérifie que l'utilisateur est bien admin (booléen strict)
     if (decoded.admin !== true) {
         res.status(403).json({ message: 'Accès interdit, vous devez être admin pour accéder à cette ressource' });
         return;
     }
 
+    // Autorisé, passe au middleware suivant
     next();
 }

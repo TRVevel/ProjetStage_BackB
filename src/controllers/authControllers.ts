@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import { hashPassword, verifyPassword } from '../utils/pwdUtils';
 import UserSchema, { IUser } from '../DBSchemas/UserSchema';
-import { generateToken} from '../utils/JWTUtils';
+import { generateToken } from '../utils/JWTUtils';
 import { userLoginValidationSchema, userValidationSchema } from '../JoiValidators/authValidators';
 import BookSchema from '../DBSchemas/BookSchema';
 
+/**
+ * Inscription d'un nouvel utilisateur
+ */
 export async function register(req: Request, res: Response) {
     try {
         // Validation des données d'entrée avec Joi
@@ -23,7 +26,7 @@ export async function register(req: Request, res: Response) {
 
         const { name, phone, address, city, postalCode, email, password } = req.body;
 
-        // Vérifier si un utilisateur avec le même email existe déjà
+        // Vérifier si un utilisateur avec le même email existe déjà (insensible à la casse)
         const existingUser = await UserSchema.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
         if (existingUser) {
             res.status(409).json({
@@ -35,10 +38,8 @@ export async function register(req: Request, res: Response) {
         // Hashage du mot de passe
         const hashedPassword = await hashPassword(password);
 
-        // Créer un nouvel utilisateur
+        // Création et sauvegarde du nouvel utilisateur
         const newUser: IUser = new UserSchema({ name, phone, address, city, postalCode, email, hashedPassword });
-
-        // Sauvegarde de l'utilisateur
         const savedUser = await newUser.save();
 
         // Supprimer le mot de passe haché avant de renvoyer l'utilisateur
@@ -74,9 +75,12 @@ export async function register(req: Request, res: Response) {
     }
 }
 
+/**
+ * Connexion utilisateur
+ */
 export async function login(req: Request, res: Response) {
     try {
-        // Validation des données
+        // Validation des données d'entrée
         const { error } = userLoginValidationSchema.validate(req.body);
         if (error) {
             res.status(400).json({ message: "Erreur de validation", details: error.details });
@@ -92,27 +96,32 @@ export async function login(req: Request, res: Response) {
             return;
         }
 
+        // Vérification du mot de passe
         const isPasswordValid = await verifyPassword(password, user.hashedPassword);
         if (!isPasswordValid) {
             res.status(401).json({ message: 'Mot de passe incorrect' });
             return;
         }
+
+        // Mise à jour de l'état utilisateur et des livres associés
         user.isActive = true;
         user.lastLogin = new Date();
         const userBooks = await BookSchema.find({ owner: user._id });
-
         for (const book of userBooks) {
             book.ownerActive = true;
             await book.save();
         }
-        // Générer un token avec les informations de l'utilisateur
-        const token = generateToken({ _id: user._id, email: user.email, admin: user.admin });
 
-        // Stocker le token dans un cookie
-        res.cookie("jwt", token, {httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production"
+        // Génération et stockage du token JWT
+        const token = generateToken({ _id: user._id, email: user.email, admin: user.admin });
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production"
         });
 
         await user.save();
+
         res.status(200).json({
             message: 'Connexion réussie',
             token,
@@ -126,6 +135,9 @@ export async function login(req: Request, res: Response) {
     }
 }
 
+/**
+ * Déconnexion utilisateur
+ */
 export async function logout(req: Request, res: Response) {
     try {
         res.clearCookie('jwt');
@@ -137,6 +149,9 @@ export async function logout(req: Request, res: Response) {
     }
 }
 
+/**
+ * Changement de mot de passe utilisateur connecté
+ */
 export async function passwordChange(req: Request, res: Response) {
     try {
         const { oldPassword, newPassword } = req.body;
@@ -146,7 +161,7 @@ export async function passwordChange(req: Request, res: Response) {
             return;
         }
 
-        // Parse the logged-in user's _id from the decoded token
+        // Récupération de l'utilisateur connecté via le header (à adapter selon ton auth middleware)
         const user = req.headers.user ? JSON.parse(req.headers.user as string) : null;
         if (!user || !user._id) {
             res.status(401).json({ message: 'Utilisateur non authentifié' });
@@ -154,21 +169,21 @@ export async function passwordChange(req: Request, res: Response) {
         }
 
         const userId = user._id;
-
         const existingUser = await UserSchema.findById(userId);
         if (!existingUser) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
         }
 
+        // Vérification de l'ancien mot de passe
         const isMatch = await verifyPassword(oldPassword, existingUser.hashedPassword);
         if (!isMatch) {
             res.status(400).json({ message: 'Ancien mot de passe incorrect' });
             return;
         }
 
+        // Mise à jour du mot de passe
         const hashedPassword = await hashPassword(newPassword);
-
         existingUser.hashedPassword = hashedPassword;
         await existingUser.save();
 

@@ -2,91 +2,87 @@ import { Request, Response } from 'express';
 import UserSchema from '../DBSchemas/UserSchema';
 import LoanSchema from '../DBSchemas/LoanSchema';
 import BookSchema from '../DBSchemas/BookSchema';
-import CitySchema from '../DBSchemas/CitySchema';
 
-export async function getAllUsers(req:Request, res:Response){
-    try{
-        const users= await UserSchema.find();
+/**
+ * Récupère tous les utilisateurs
+ */
+export async function getAllUsers(req: Request, res: Response) {
+    try {
+        const users = await UserSchema.find();
         res.status(200).json(users);
-    }catch(err:any){
-        res.status(500).json({message: 'Erreur interne', error: err.message});
+    } catch (err: any) {
+        res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
 
-export async function getUserById(req:Request, res:Response){
-    try{
-        const {userId}= req.params;
-        if(!userId){
-            res.status(400).json({message: 'Champs manquant'});
+/**
+ * Récupère un utilisateur par son ID
+ */
+export async function getUserById(req: Request, res: Response) {
+    try {
+        const { userId } = req.params;
+        if (!userId) {
+            res.status(400).json({ message: 'Champs manquant' });
             return;
         }
-        const user= await UserSchema.findById(userId);
-        if(!user){
-            res.status(404).json({message: 'Utilisateur non trouvé'});
+        const user = await UserSchema.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
         }
-        // Masquer le mot de passe avant de renvoyer les données de l'utilisateur
         user.hashedPassword = '';
         res.status(200).json(user);
-    }catch(err:any){
-        res.status(500).json({message: 'Erreur interne', error: err.message});
+    } catch (err: any) {
+        res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
 
+/**
+ * Recherche des utilisateurs par nom, prénom, email ou code postal
+ */
 export async function getUserByNameOrEmailOrPostalCode(req: Request, res: Response) {
     try {
-        // Récupérer les paramètres de recherche depuis l'URL
         const { query } = req.params;
-
-        // Vérification si le paramètre de recherche a bien été fourni
         if (!query) {
             res.status(400).json({ message: 'Le paramètre "query" est requis.' });
             return;
         }
-
-        // Recherche d'utilisateurs correspondant au nom, email ou département, insensible à la casse
         const users = await UserSchema.find({
             $or: [
-                { name: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom complet
-                { firstName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le prénom
-                { lastName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom
-                { email: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur l'email
-                { postalCode: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
+                { name: { $regex: new RegExp(query, 'i') } },
+                { firstName: { $regex: new RegExp(query, 'i') } },
+                { lastName: { $regex: new RegExp(query, 'i') } },
+                { email: { $regex: new RegExp(query, 'i') } },
+                { postalCode: { $regex: new RegExp(query, 'i') } }
             ]
         });
-
-        // Si aucun utilisateur trouvé
         if (users.length === 0) {
             res.status(404).json({ message: 'Aucun utilisateur trouvé avec ce critère.' });
             return;
         }
-
-        // Masquer le mot de passe avant de renvoyer les données des utilisateurs
-        users.forEach(user => {
-            user.hashedPassword = '';
-        });
-
-        // Retourner les utilisateurs trouvés
-        res.status(200).json( users );
+        users.forEach(user => { user.hashedPassword = ''; });
+        res.status(200).json(users);
     } catch (error: any) {
         res.status(500).json({ message: 'Erreur interne', error: error.message });
     }
 }
 
-
+/**
+ * Met à jour les informations d'un utilisateur
+ */
 export async function updateUser(req: Request, res: Response) {
     try {
         const userId = req.params.userId || req.params.id;
-        const {address, city, postalCode, phone } = req.body;
+        const { address, city, postalCode, phone } = req.body;
 
         if (!userId) {
             res.status(400).json({ message: 'ID de l\'utilisateur requis' });
             return;
         }
 
-        // Construire dynamiquement l'objet de mise à jour
+        // Construction dynamique de l'objet de mise à jour
         const updateFields: any = {};
-        if (address !== undefined) updateFields.adress = address;
+        if (address !== undefined) updateFields.address = address;
         if (city !== undefined) updateFields.city = city;
         if (postalCode !== undefined) updateFields.postalCode = postalCode;
         if (phone !== undefined) updateFields.phone = phone;
@@ -107,26 +103,31 @@ export async function updateUser(req: Request, res: Response) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
+
+/**
+ * Active ou désactive un utilisateur (toggle)
+ */
 export async function isActive(req: Request, res: Response) {
     try {
         const userId = req.params.userId;
         const user = await UserSchema.findById(userId);
-        
 
         if (!user) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
         }
         user.isActive = !user.isActive;
-        
         await user.save({ validateBeforeSave: false });
 
-        res.status(200).json( user );
+        res.status(200).json(user);
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
     }
 }
 
+/**
+ * Supprime un utilisateur si aucune contrainte d'emprunt ou de possession de livre
+ */
 export async function deleteUser(req: Request, res: Response) {
     try {
         const { userId } = req.params;
@@ -163,7 +164,9 @@ export async function deleteUser(req: Request, res: Response) {
     }
 }
 
-
+/**
+ * Ajoute un livre à la liste des livres réservés de l'utilisateur
+ */
 export async function addReservedBook(req: Request, res: Response) {
     try {
         const { userId, bookId } = req.params;
@@ -180,8 +183,7 @@ export async function addReservedBook(req: Request, res: Response) {
         }
 
         // Vérifier que l'utilisateur ne peut réserver qu'une fois le livre
-        const existingBook = await UserSchema.findOne({ _id: userId, bookReserved: bookId });
-        if (existingBook) {
+        if (user.bookReserved.includes(bookId)) {
             res.status(400).json({ message: 'Le livre est déjà réservé par cet utilisateur' });
             return;
         }
@@ -192,7 +194,6 @@ export async function addReservedBook(req: Request, res: Response) {
             return;
         }
 
-        // Ajouter le livre à la liste des livres réservés de l'utilisateur
         user.bookReserved.push(bookId);
         await user.save();
 
@@ -202,6 +203,9 @@ export async function addReservedBook(req: Request, res: Response) {
     }
 }
 
+/**
+ * Ajoute un événement à la liste des événements réservés de l'utilisateur
+ */
 export async function addreservedEvent(req: Request, res: Response) {
     try {
         const { userId, eventId } = req.params;
@@ -211,20 +215,18 @@ export async function addreservedEvent(req: Request, res: Response) {
             return;
         }
 
-        //Vérifier que l'utilisateur  ne peut réserver qu'une fois l'évènement
-        const existingEvent = await UserSchema.findOne({ _id: userId, eventReserved: eventId });
-        if (existingEvent) {
-            res.status(400).json({ message: 'L\'événement est déjà réservé par cet utilisateur' });
-            return;
-        }
-
         const user = await UserSchema.findById(userId);
         if (!user) {
             res.status(404).json({ message: 'Utilisateur non trouvé' });
             return;
         }
 
-        // Ajouter l'événement à la liste des événements réservés de l'utilisateur
+        // Vérifier que l'utilisateur ne peut réserver qu'une fois l'évènement
+        if (user.eventReserved.includes(eventId)) {
+            res.status(400).json({ message: 'L\'événement est déjà réservé par cet utilisateur' });
+            return;
+        }
+
         user.eventReserved.push(eventId);
         await user.save();
 
@@ -234,20 +236,15 @@ export async function addreservedEvent(req: Request, res: Response) {
     }
 }
 
-
-export async function addReadBook (req: Request, res: Response) {
+/**
+ * Ajoute un livre à la liste des livres lus de l'utilisateur
+ */
+export async function addReadBook(req: Request, res: Response) {
     try {
         const { userId, bookId } = req.params;
 
         if (!userId || !bookId) {
             res.status(400).json({ message: 'Champs manquant' });
-            return;
-        }
-
-        //Vérifier que l'utilisateur  ne peut réserver qu'une fois l'évènement
-        const existingBook = await UserSchema.findOne({ _id: userId, booksRead: bookId });
-        if (existingBook) {
-            res.status(400).json({ message: 'Le livre lu ne peut pas s\'afficher deux fois' });
             return;
         }
 
@@ -257,7 +254,12 @@ export async function addReadBook (req: Request, res: Response) {
             return;
         }
 
-        // Ajouter l'événement à la liste des événements réservés de l'utilisateur
+        // Vérifier que le livre n'est pas déjà dans la liste des livres lus
+        if (user.booksRead.includes(bookId)) {
+            res.status(400).json({ message: 'Le livre lu ne peut pas s\'afficher deux fois' });
+            return;
+        }
+
         user.booksRead.push(bookId);
         await user.save();
 

@@ -1,5 +1,15 @@
 import { Router } from "express";
-import { deleteUser, getAllUsers, getUserById, getUserByNameOrEmailOrPostalCode, isActive, updateUser, addReservedBook, addreservedEvent, addReadBook } from "../controllers/userControllers";
+import {
+    deleteUser,
+    getAllUsers,
+    getUserById,
+    getUserByNameOrEmailOrPostalCode,
+    isActive,
+    updateUser,
+    addReservedBook,
+    addreservedEvent,
+    addReadBook
+} from "../controllers/userControllers";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import { isAdmin } from "../middlewares/verifyIsAdmin";
 
@@ -22,14 +32,23 @@ const router = Router();
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Liste des utilisateurs récupérée avec succès
  *                 data:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/User'
  *       500:
  *         description: Erreur interne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur interne
  */
-router.get('/users',  getAllUsers);
+router.get('/users', getAllUsers);
 
 /**
  * @swagger
@@ -44,6 +63,7 @@ router.get('/users',  getAllUsers);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
  *         description: ID de l'utilisateur à récupérer
  *     responses:
  *       200:
@@ -94,6 +114,8 @@ router.get('/users/:userId', getUserById);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "eva.sarf@example.com"
+ *         description: Nom, email ou code postal à rechercher
  *     responses:
  *       200:
  *         description: Utilisateur trouvé
@@ -104,14 +126,33 @@ router.get('/users/:userId', getUserById);
  *               properties:
  *                 message:
  *                   type: string
+ *                   example: Utilisateur trouvé
  *                 data:
- *                   $ref: '#/components/schemas/User'
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
  *       404:
  *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Aucun utilisateur trouvé avec ce critère.
  *       500:
  *         description: Erreur interne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur interne
  */
-router.get('/users/search/:query',isAdmin, getUserByNameOrEmailOrPostalCode);
+router.get('/users/search/:query', isAdmin, getUserByNameOrEmailOrPostalCode);
 
 /**
  * @swagger
@@ -126,6 +167,7 @@ router.get('/users/search/:query',isAdmin, getUserByNameOrEmailOrPostalCode);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
  *         description: ID de l'utilisateur à mettre à jour
  *     requestBody:
  *       required: true
@@ -134,18 +176,18 @@ router.get('/users/search/:query',isAdmin, getUserByNameOrEmailOrPostalCode);
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
- *                 example: "Eva Sarf"
- *               phone:
- *                 type: string
- *                 example: "+123456789"
  *               address:
  *                 type: string
  *                 example: "123 Rue Exemple, Paris"
- *               email:
+ *               city:
  *                 type: string
- *                 example: "eva.sarf@example.com"
+ *                 example: "Paris"
+ *               postalCode:
+ *                 type: string
+ *                 example: "75000"
+ *               phone:
+ *                 type: string
+ *                 example: "+33612345678"
  *     responses:
  *       200:
  *         description: Utilisateur mis à jour avec succès
@@ -157,6 +199,8 @@ router.get('/users/search/:query',isAdmin, getUserByNameOrEmailOrPostalCode);
  *                 message:
  *                   type: string
  *                   example: Utilisateur mis à jour avec succès
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Champs manquant
  *         content:
@@ -203,6 +247,7 @@ router.put('/users/:userId', verifyTokenMiddleware, updateUser);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
  *         description: ID de l'utilisateur à mettre à jour
  *     requestBody:
  *       required: true
@@ -225,6 +270,8 @@ router.put('/users/:userId', verifyTokenMiddleware, updateUser);
  *                 message:
  *                   type: string
  *                   example: Statut de l'utilisateur mis à jour avec succès
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *       400:
  *         description: Champs manquant
  *         content:
@@ -271,6 +318,7 @@ router.put('/users/:userId/active', isActive);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
  *         description: ID de l'utilisateur à supprimer
  *     responses:
  *       200:
@@ -283,6 +331,8 @@ router.put('/users/:userId/active', isActive);
  *                 message:
  *                   type: string
  *                   example: Utilisateur supprimé avec succès
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
  *       404:
  *         description: Utilisateur non trouvé
  *         content:
@@ -306,10 +356,208 @@ router.put('/users/:userId/active', isActive);
  */
 router.delete('/users/:userId', deleteUser);
 
+/**
+ * @swagger
+ * /api/users/{userId}/reservedBooks/{bookId}:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Ajouter un livre à la liste des livres réservés de l'utilisateur
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
+ *         description: ID de l'utilisateur
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df23"
+ *         description: ID du livre à réserver
+ *     responses:
+ *       200:
+ *         description: Livre réservé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Livre réservé avec succès
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Champs manquant ou déjà réservé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Le livre est déjà réservé par cet utilisateur
+ *       404:
+ *         description: Utilisateur ou livre non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur interne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur interne
+ */
 router.post('/users/:userId/reservedBooks/:bookId', verifyTokenMiddleware, addReservedBook);
+
+/**
+ * @swagger
+ * /api/users/{userId}/reservedEvents/{eventId}:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Ajouter un événement à la liste des événements réservés de l'utilisateur
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
+ *         description: ID de l'utilisateur
+ *       - in: path
+ *         name: eventId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df99"
+ *         description: ID de l'événement à réserver
+ *     responses:
+ *       200:
+ *         description: Événement réservé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Événement réservé avec succès
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Champs manquant ou déjà réservé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: L'événement est déjà réservé par cet utilisateur
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur interne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur interne
+ */
 router.post('/users/:userId/reservedEvents/:eventId', verifyTokenMiddleware, addreservedEvent);
+
+/**
+ * @swagger
+ * /api/users/{userId}/readBooks/{bookId}:
+ *   post:
+ *     tags:
+ *       - Users
+ *     summary: Ajouter un livre à la liste des livres lus de l'utilisateur
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df24"
+ *         description: ID de l'utilisateur
+ *       - in: path
+ *         name: bookId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df23"
+ *         description: ID du livre lu
+ *     responses:
+ *       200:
+ *         description: Livre ajouté à la liste des livres lus
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Livre ajouté à la liste des livres lus
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Champs manquant ou déjà lu
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Le livre lu ne peut pas s'afficher deux fois
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur interne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Erreur interne
+ */
 router.post('/users/:userId/readBooks/:bookId', verifyTokenMiddleware, addReadBook);
-
-
 
 export default router;
