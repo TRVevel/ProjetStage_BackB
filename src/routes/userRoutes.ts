@@ -354,7 +354,7 @@ router.put('/users/:userId/active', isActive);
  *                   type: string
  *                   example: Erreur interne
  */
-router.delete('/users/:userId', deleteUser);
+router.delete('/users/:userId', isAdmin, deleteUser);
 
 /**
  * @swagger
