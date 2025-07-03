@@ -299,8 +299,8 @@ router.put('/books/changeActive/:bookId',verifyTokenMiddleware, changeActiveStat
  *       500:
  *         description: "Internal server error"
  */
-router.delete('/books/:bookId', deleteBook);
-router.put('/books/:bookId/reactivate',  reactivateBook);
+router.delete('/books/:bookId', isAdmin, deleteBook);
+router.put('/books/:bookId/reactivate', isAdmin, reactivateBook);
 
 
 export default router;

@@ -304,7 +304,7 @@ router.put('/users/:userId/active', isActive);
  *                   type: string
  *                   example: Erreur interne
  */
-router.delete('/users/:userId', deleteUser);
+router.delete('/users/:userId', isAdmin, deleteUser);
 
 router.post('/users/:userId/reservedBooks/:bookId', verifyTokenMiddleware, addReservedBook);
 router.post('/users/:userId/reservedEvents/:eventId', verifyTokenMiddleware, addreservedEvent);
