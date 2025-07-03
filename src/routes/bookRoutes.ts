@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addBook, changeActiveStatus, deleteBook, getAllBooks, getAllBooksByActiveAndOwnerActive, getBookById, getBooksBypostalCode, updateBook } from "../controllers/bookController";
+import { addBook, changeActiveStatus, deleteBook, getAllBooks, getAllBooksByActiveAndOwnerActive, getBookById, getBooksBypostalCode, reactivateBook, updateBook } from "../controllers/bookController";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import { isAdmin } from "../middlewares/verifyIsAdmin";
 
@@ -299,6 +299,8 @@ router.put('/books/changeActive/:bookId',verifyTokenMiddleware, changeActiveStat
  *       500:
  *         description: "Internal server error"
  */
-router.delete('/books/:bookId',verifyTokenMiddleware, deleteBook);
+router.delete('/books/:bookId', deleteBook);
+router.put('/books/:bookId/reactivate',  reactivateBook);
+
 
 export default router;

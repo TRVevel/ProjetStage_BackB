@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 export async function getAllBooks(req:Request, res:Response){
     try{
         const books= await BookSchema.find();
-        res.status(200).json({message: 'Liste des livres', books});
+        res.status(200).json(books);
     }catch(err:any){
         res.status(500).json({message: 'Erreur interne', error: err.message});
     }
@@ -191,5 +191,40 @@ export async function deleteBook(req: Request, res: Response) {
         res.status(200).json({message: "Livre effacé avec succès" , deletedBook});
     } catch (err: any) {
         res.status(500).json({ message: 'Erreur interne', error: err.message });
+    }
+}
+
+export async function reactivateBook(req: Request, res: Response) {
+    try {
+        const { bookId } = req.params;
+
+        if (!bookId) {
+            res.status(400).json({ message: 'ID du livre requis' });
+            return
+        }
+
+        // Vérifie s’il est actuellement dans un emprunt actif
+        const loansWithBook = await LoanSchema.find({ bookId });
+        if (loansWithBook.length > 0) {
+            res.status(400).json({ message: 'Impossible de réactiver : le livre est emprunté' });
+            return
+        }
+
+        const updatedBook = await BookSchema.findByIdAndUpdate(
+            bookId,
+            { $set: { isActive: true } },
+            { new: true }
+        );
+
+        if (!updatedBook) {
+            res.status(404).json({ message: 'Livre non trouvé' });
+            return
+        }
+
+        res.status(200).json(updatedBook );
+        return
+    } catch (err: any) {
+        res.status(500).json({ message: 'Erreur interne', error: err.message });
+        return
     }
 }
