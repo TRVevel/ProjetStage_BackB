@@ -55,6 +55,8 @@ npm install --save-dev @types/express-rate-limit
 npm audit
 #Vérifie la fiabilité des dépendances
 
+npx npm-check-updates -u
+
 docker-compose up --build  
 # Démarre les services définis dans le fichier `docker-compose.yml` en reconstruisant les images si nécessaire.
 
