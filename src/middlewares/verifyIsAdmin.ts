@@ -24,7 +24,7 @@ export function isAdmin(req: Request, res: Response, next: NextFunction) {
         return
     }
 
-    if (decoded.admin == true) {
+    if (decoded.admin == false) {
         res.status(403).json({ message: 'Accès interdit, vous devez être admin pour accéder à cette ressource' });
         return
     }
