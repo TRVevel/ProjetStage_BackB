@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const loanConttrolers_1 = require("../controllers/loanConttrolers");
 const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
-const verifyIsAdmin_1 = require("../middlewares/verifyIsAdmin");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -30,14 +29,18 @@ const router = (0, express_1.Router)();
  *                     properties:
  *                       bookId:
  *                         type: string
+ *                         example: "60b6a3e8f7a90b3b9c98df23"
  *                       userId:
  *                         type: string
+ *                         example: "60b6a3e8f7a90b3b9c98df24"
  *                       startDate:
  *                         type: string
  *                         format: date
+ *                         example: "2025-05-01"
  *                       endDate:
  *                         type: string
  *                         format: date
+ *                         example: "2025-05-15"
  *       500:
  *         description: Erreur interne
  *         content:
@@ -50,9 +53,9 @@ const router = (0, express_1.Router)();
  *                   example: Erreur interne
  *                 error:
  *                   type: string
- *                   example: [description de l'erreur]
+ *                   example: "Stack trace or error message"
  */
-router.get('/loans', verifyIsAdmin_1.isAdmin, loanConttrolers_1.getAllLoans);
+router.get('/loans', loanConttrolers_1.getAllLoans);
 /**
  * @swagger
  * /api/loans/{bookId}:
@@ -66,6 +69,7 @@ router.get('/loans', verifyIsAdmin_1.isAdmin, loanConttrolers_1.getAllLoans);
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df23"
  *         description: ID du livre à emprunter
  *     requestBody:
  *       required: true
@@ -101,14 +105,18 @@ router.get('/loans', verifyIsAdmin_1.isAdmin, loanConttrolers_1.getAllLoans);
  *                   properties:
  *                     bookId:
  *                       type: string
+ *                       example: "60b6a3e8f7a90b3b9c98df23"
  *                     userId:
  *                       type: string
+ *                       example: "60b6a3e8f7a90b3b9c98df24"
  *                     startDate:
  *                       type: string
  *                       format: date
+ *                       example: "2025-05-01"
  *                     endDate:
  *                       type: string
  *                       format: date
+ *                       example: "2025-05-15"
  *       400:
  *         description: Champs manquants
  *         content:
@@ -131,7 +139,7 @@ router.get('/loans', verifyIsAdmin_1.isAdmin, loanConttrolers_1.getAllLoans);
  *                   example: Erreur interne
  *                 error:
  *                   type: string
- *                   example: [description de l'erreur]
+ *                   example: "Stack trace or error message"
  */
 router.post('/loans/:bookId', verifyTokenMiddleware_1.verifyTokenMiddleware, loanConttrolers_1.addLoan);
 /**
@@ -147,6 +155,7 @@ router.post('/loans/:bookId', verifyTokenMiddleware_1.verifyTokenMiddleware, loa
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df99"
  *         description: ID de l'emprunt à mettre à jour
  *     requestBody:
  *       required: true
@@ -190,14 +199,18 @@ router.post('/loans/:bookId', verifyTokenMiddleware_1.verifyTokenMiddleware, loa
  *                   properties:
  *                     bookId:
  *                       type: string
+ *                       example: "60b6a3e8f7a90b3b9c98df23"
  *                     userId:
  *                       type: string
+ *                       example: "60b6a3e8f7a90b3b9c98df24"
  *                     startDate:
  *                       type: string
  *                       format: date
+ *                       example: "2025-05-01"
  *                     endDate:
  *                       type: string
  *                       format: date
+ *                       example: "2025-05-15"
  *       400:
  *         description: Champs manquants
  *         content:
@@ -243,6 +256,7 @@ router.put('/loans/:loanId', verifyTokenMiddleware_1.verifyTokenMiddleware, loan
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df99"
  *         description: ID de l'emprunt à confirmer
  *     responses:
  *       200:
@@ -290,6 +304,7 @@ router.put('/loans/confirmed/:loanId', verifyTokenMiddleware_1.verifyTokenMiddle
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df99"
  *         description: ID de l'emprunt à annuler
  *     responses:
  *       200:
@@ -337,6 +352,7 @@ router.delete('/loans/canceled/:loanId', verifyTokenMiddleware_1.verifyTokenMidd
  *         required: true
  *         schema:
  *           type: string
+ *         example: "60b6a3e8f7a90b3b9c98df99"
  *         description: ID de l'emprunt à marquer comme retourné
  *     responses:
  *       200:

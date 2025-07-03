@@ -15,7 +15,14 @@ exports.userValidationSchema = joi_1.default.object({
     email: joi_1.default.string().email().required().messages({
         'string.email': '"email" doit être une adresse email valide.',
     }),
-    phone: joi_1.default.string().min(10).max(15).messages({
+    phone: joi_1.default.string()
+        .allow('')
+        .empty('')
+        .when(joi_1.default.string().min(1), {
+        then: joi_1.default.string().min(10).max(15),
+        otherwise: joi_1.default.string().allow('').empty(''),
+    })
+        .messages({
         'string.min': '"phone" doit comporter au moins 10 caractères.',
         'string.max': '"phone" doit comporter au maximum 15 caractères.',
     }),

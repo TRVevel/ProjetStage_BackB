@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const eventController_1 = require("../controllers/eventController");
 const verifyIsAdmin_1 = require("../middlewares/verifyIsAdmin");
+const verifyTokenMiddleware_1 = require("../middlewares/verifyTokenMiddleware");
 const router = (0, express_1.Router)();
 /**
  * @swagger
@@ -127,7 +128,7 @@ router.get('/events/:eventId', eventController_1.getEventById);
  *       500:
  *         description: Erreur interne
  */
-router.post('/events', verifyIsAdmin_1.isAdmin, eventController_1.createEvent);
+router.post('/events', verifyTokenMiddleware_1.verifyTokenMiddleware, verifyIsAdmin_1.isAdmin, eventController_1.createEvent);
 /**
  * @swagger
  * /api/events/{eventId}:

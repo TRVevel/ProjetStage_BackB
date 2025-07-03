@@ -18,29 +18,46 @@ exports.createEvent = createEvent;
 exports.updateEvent = updateEvent;
 exports.deleteEvent = deleteEvent;
 const EventSchema_1 = __importDefault(require("../DBSchemas/EventSchema"));
+/**
+ * Récupère tous les événements
+ */
 function getAllEvents(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const event = yield EventSchema_1.default.find();
-            res.status(200).json(event);
+            const events = yield EventSchema_1.default.find();
+            res.status(200).json(events);
         }
         catch (err) {
             res.status(500).json({ message: "Erreur interne", error: err.message });
         }
     });
 }
+/**
+ * Récupère un événement par son ID
+ */
 function getEventById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { eventId } = req.params;
+            if (!eventId) {
+                res.status(400).json({ message: "ID de l'événement requis" });
+                return;
+            }
             const event = yield EventSchema_1.default.findById(eventId);
-            res.status(200).json({ message: "Liste des événements", data: event });
+            if (!event) {
+                res.status(404).json({ message: "Événement non trouvé" });
+                return;
+            }
+            res.status(200).json({ message: "Événement trouvé", data: event });
         }
         catch (err) {
             res.status(500).json({ message: "Erreur interne", error: err.message });
         }
     });
 }
+/**
+ * Crée un nouvel événement
+ */
 function createEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -64,6 +81,9 @@ function createEvent(req, res) {
         }
     });
 }
+/**
+ * Met à jour un événement existant
+ */
 function updateEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -79,10 +99,14 @@ function updateEvent(req, res) {
                 images,
                 creator,
                 language,
-                usersInEvent: [],
+                usersInEvent,
                 eventStartDate,
                 eventEndDate,
-            });
+            }, { new: true });
+            if (!event) {
+                res.status(404).json({ message: "Événement non trouvé" });
+                return;
+            }
             res.status(200).json({ message: "Événement mis à jour", data: event });
         }
         catch (err) {
@@ -90,14 +114,22 @@ function updateEvent(req, res) {
         }
     });
 }
+/**
+ * Supprime un événement par son ID
+ */
 function deleteEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { eventId } = req.params;
             if (!eventId) {
-                res.status(400).json({ message: "ID inconnu" });
+                res.status(400).json({ message: "ID de l'événement requis" });
+                return;
             }
             const event = yield EventSchema_1.default.findByIdAndDelete(eventId);
+            if (!event) {
+                res.status(404).json({ message: "Événement non trouvé" });
+                return;
+            }
             res.status(200).json({ message: "Événement supprimé", data: event });
         }
         catch (err) {

@@ -38,7 +38,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const UserSchema = new mongoose_1.Schema({
     admin: { type: Boolean, default: false }, // Par défaut, l'utilisateur n'est pas admin
     name: { type: String, required: true },
-    phone: { type: String, required: false },
+    phone: { type: String, required: false, default: "" }, // Champ optionnel, par défaut une chaîne vide
     address: { type: String, required: true },
     city: { type: String, required: true },
     postalCode: { type: String, required: true },

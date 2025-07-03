@@ -19,6 +19,9 @@ exports.createComment = createComment;
 exports.modifyComment = modifyComment;
 exports.deleteComment = deleteComment;
 const CommentSchema_1 = __importDefault(require("../DBSchemas/CommentSchema"));
+/**
+ * Récupère tous les commentaires d'un livre par son ID
+ */
 function getAllCommentsByBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -31,6 +34,9 @@ function getAllCommentsByBook(req, res) {
         }
     });
 }
+/**
+ * Récupère un commentaire par son ID
+ */
 function getCommentById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -51,50 +57,63 @@ function getCommentById(req, res) {
         }
     });
 }
+/**
+ * Récupère tous les commentaires d'un utilisateur par son ID
+ */
 function getAllCommentByUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { user_id } = req.params;
-            const utilisateursSession = yield CommentSchema_1.default.findById({ where: { user_id } });
-            if (!utilisateursSession) {
-                res.status(404).json({ message: "Utilisateur non trouvé" });
+            const comments = yield CommentSchema_1.default.find({ owner: user_id });
+            if (!comments.length) {
+                res.status(404).json({ message: "Aucun commentaire trouvé pour cet utilisateur" });
+                return;
             }
-            res.send(utilisateursSession);
+            res.status(200).json(comments);
         }
         catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ message: 'Erreur interne', error: error.message });
         }
     });
 }
+/**
+ * Crée un commentaire pour un livre donné par l'utilisateur connecté
+ */
 function createComment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // Validation des champs
             const { comment, title } = req.body;
-            const user = req.headers.user ? JSON.parse(req.headers.user) : null;
-            const book = req.params.bookId;
-            if (!comment) {
-                res.status(400).send('Le commentaire est incomplet.');
+            const bookId = req.params.bookId;
+            const user = req.user;
+            if (!comment || !title) {
+                res.status(400).json({ message: "Le titre et le commentaire sont requis." });
                 return;
             }
-            if (!user) {
-                res.status(403).json({ message: "Utilisateur non valide." });
+            if (!user || !user._id) {
+                res.status(401).json({ message: "Utilisateur non authentifié." });
                 return;
             }
-            if (!book) {
-                res.status(400).json({ message: "Le livre avec cet ID n'existe pas." });
+            if (!bookId) {
+                res.status(400).json({ message: "L'identifiant du livre est requis." });
                 return;
             }
-            const commentUser = new CommentSchema_1.default({ book_id: book, owner: user, title, comment });
-            const savedComment = yield commentUser.save();
-            res.status(200).json({ message: 'Livre trouvé', data: savedComment });
+            const commentToSave = new CommentSchema_1.default({
+                book_id: bookId,
+                owner: user._id,
+                title,
+                comment,
+            });
+            const savedComment = yield commentToSave.save();
+            res.status(201).json({ message: "Commentaire créé avec succès.", data: savedComment });
         }
         catch (err) {
-            // Gestion des erreurs
-            res.status(500).json({ message: 'Erreur interne', error: err.message });
+            res.status(500).json({ message: "Erreur interne", error: err.message });
         }
     });
 }
+/**
+ * Modifie un commentaire existant par son ID
+ */
 function modifyComment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -110,14 +129,16 @@ function modifyComment(req, res) {
             if (title)
                 commentUser.title = title;
             yield commentUser.save();
-            res.status(200).json({ message: "Commentaire modifié avec succès", commentUser });
+            res.status(200).json({ message: "Commentaire modifié avec succès", data: commentUser });
         }
         catch (error) {
-            console.error("Erreur lors de la modification :", error);
-            res.status(500).json({ message: "Erreur serveur" });
+            res.status(500).json({ message: "Erreur interne", error: error.message });
         }
     });
 }
+/**
+ * Supprime un commentaire par son ID
+ */
 function deleteComment(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -127,11 +148,10 @@ function deleteComment(req, res) {
                 res.status(404).json({ message: "Commentaire non trouvé" });
                 return;
             }
-            res.json({ message: "Commentaire supprimé avec succès" });
+            res.status(200).json({ message: "Commentaire supprimé avec succès" });
         }
         catch (error) {
-            console.error("Erreur lors de la suppression :", error);
-            res.status(500).json({ message: "Erreur serveur" });
+            res.status(500).json({ message: "Erreur interne", error: error.message });
         }
     });
 }

@@ -12,26 +12,40 @@ function verifyTokenMiddleware(req, res, next) {
     if (!SECRET_KEY) {
         throw new Error('SECRET KEY is not defined');
     }
-    const cookie = req.headers.cookie;
-    if (!cookie) {
-        res.status(401).json({ message: 'Vous devez être connecté pour accéder à cette ressource' });
-        return;
+    // Vérifie d'abord dans Authorization header
+    let token = '';
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        console.log('TOKEN:', token);
+        token = authHeader.split(' ')[1];
     }
-    const token = cookie.split('=')[1];
+    // Sinon, tente depuis les cookies
+    else if (req.headers.cookie) {
+        console.log('Cookies:', req.headers.cookie);
+        console.log('req.headers.cookie:', req.headers.cookie);
+        // Recherche le cookie nommé jwt
+        const cookies = req.headers.cookie.split(';').map(c => c.trim());
+        const jwtCookie = cookies.find(c => c.startsWith('jwt='));
+        if (jwtCookie) {
+            token = jwtCookie.split('=')[1];
+            console.log('TOKEN:', token);
+        }
+    }
     if (!token) {
         res.status(401).json({ message: 'Token manquant' });
         return;
     }
     try {
         const decoded = (0, JWTUtils_1.verifyToken)(token);
-        if (!decoded) {
+        if (!decoded || typeof decoded === 'string') {
             res.status(403).json({ message: 'Token invalide ou expiré' });
             return;
         }
-        req.user = decoded; // ✅ Bonne pratique : attacher à req.user
+        req.user = decoded;
         next();
     }
     catch (error) {
-        res.status(401).json({ message: 'Token invalide' });
+        res.status(401).json({ message: 'Erreur de vérification du token', error });
+        return;
     }
 }

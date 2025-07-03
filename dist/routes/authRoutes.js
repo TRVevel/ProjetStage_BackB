@@ -19,9 +19,9 @@ const router = (0, express_1.Router)();
  *             type: object
  *             required:
  *               - name
- *               - phone
  *               - address
  *               - postalCode
+ *               - city
  *               - email
  *               - password
  *             properties:
@@ -30,7 +30,7 @@ const router = (0, express_1.Router)();
  *                 example: "Ava Sarf"
  *               phone:
  *                 type: string
- *                 example: "+123456789"
+ *                 example: "+33612345678"
  *               address:
  *                 type: string
  *                 example: "123 Rue Exemple"
@@ -38,8 +38,8 @@ const router = (0, express_1.Router)();
  *                 type: string
  *                 example: "54000"
  *               city:
- *                type: string
- *                example: "Nancy"
+ *                 type: string
+ *                 example: "Nancy"
  *               email:
  *                 type: string
  *                 format: email
@@ -79,7 +79,7 @@ router.post('/register', authControllers_1.register);
  *                 example: "ava.sarf@example.com"
  *               password:
  *                 type: string
- *                 example: "password123"
+ *                 example: "Password123@"
  *     responses:
  *       200:
  *         description: Connexion réussie
@@ -126,10 +126,10 @@ router.post('/logout', authControllers_1.logout);
  *             properties:
  *               oldPassword:
  *                 type: string
- *                 example: "oldPassword123"
+ *                 example: "Password123@"
  *               newPassword:
  *                 type: string
- *                 example: "newPassword456"
+ *                 example: "NewPassword456@"
  *     responses:
  *       200:
  *         description: Mot de passe mis à jour avec succès

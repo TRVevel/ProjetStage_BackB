@@ -7,9 +7,12 @@ exports.generateToken = generateToken;
 exports.verifyToken = verifyToken;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const SECRET_KEY = process.env.JWT_KEY;
-export function generateToken(payload) {
-    return jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
-  }
+function generateToken(payload) {
+    if (SECRET_KEY === undefined) {
+        throw new Error('JWT_KEY is not defined');
+    }
+    return jsonwebtoken_1.default.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+}
 function verifyToken(token) {
     if (SECRET_KEY === undefined) {
         throw new Error('JWT_KEY is not defined');

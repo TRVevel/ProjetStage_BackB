@@ -24,6 +24,9 @@ exports.addReadBook = addReadBook;
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const LoanSchema_1 = __importDefault(require("../DBSchemas/LoanSchema"));
 const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
+/**
+ * Récupère tous les utilisateurs
+ */
 function getAllUsers(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -35,6 +38,9 @@ function getAllUsers(req, res) {
         }
     });
 }
+/**
+ * Récupère un utilisateur par son ID
+ */
 function getUserById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -48,7 +54,6 @@ function getUserById(req, res) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
                 return;
             }
-            // Masquer le mot de passe avant de renvoyer les données de l'utilisateur
             user.hashedPassword = '';
             res.status(200).json(user);
         }
@@ -57,36 +62,31 @@ function getUserById(req, res) {
         }
     });
 }
+/**
+ * Recherche des utilisateurs par nom, prénom, email ou code postal
+ */
 function getUserByNameOrEmailOrPostalCode(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            // Récupérer les paramètres de recherche depuis l'URL
             const { query } = req.params;
-            // Vérification si le paramètre de recherche a bien été fourni
             if (!query) {
                 res.status(400).json({ message: 'Le paramètre "query" est requis.' });
                 return;
             }
-            // Recherche d'utilisateurs correspondant au nom, email ou département, insensible à la casse
             const users = yield UserSchema_1.default.find({
                 $or: [
-                    { name: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom complet
-                    { firstName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le prénom
-                    { lastName: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur le nom
-                    { email: { $regex: new RegExp(query, 'i') } }, // Recherche insensible à la casse sur l'email
-                    { postalCode: { $regex: new RegExp(query, 'i') } } // Recherche insensible à la casse sur le département
+                    { name: { $regex: new RegExp(query, 'i') } },
+                    { firstName: { $regex: new RegExp(query, 'i') } },
+                    { lastName: { $regex: new RegExp(query, 'i') } },
+                    { email: { $regex: new RegExp(query, 'i') } },
+                    { postalCode: { $regex: new RegExp(query, 'i') } }
                 ]
             });
-            // Si aucun utilisateur trouvé
             if (users.length === 0) {
                 res.status(404).json({ message: 'Aucun utilisateur trouvé avec ce critère.' });
                 return;
             }
-            // Masquer le mot de passe avant de renvoyer les données des utilisateurs
-            users.forEach(user => {
-                user.hashedPassword = '';
-            });
-            // Retourner les utilisateurs trouvés
+            users.forEach(user => { user.hashedPassword = ''; });
             res.status(200).json(users);
         }
         catch (error) {
@@ -94,6 +94,9 @@ function getUserByNameOrEmailOrPostalCode(req, res) {
         }
     });
 }
+/**
+ * Met à jour les informations d'un utilisateur
+ */
 function updateUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -103,10 +106,10 @@ function updateUser(req, res) {
                 res.status(400).json({ message: 'ID de l\'utilisateur requis' });
                 return;
             }
-            // Construire dynamiquement l'objet de mise à jour
+            // Construction dynamique de l'objet de mise à jour
             const updateFields = {};
             if (address !== undefined)
-                updateFields.adress = address;
+                updateFields.address = address;
             if (city !== undefined)
                 updateFields.city = city;
             if (postalCode !== undefined)
@@ -125,23 +128,30 @@ function updateUser(req, res) {
         }
     });
 }
+/**
+ * Active ou désactive un utilisateur (toggle)
+ */
 function isActive(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const userId = req.params.id;
-            const { isActive } = req.body;
-            const updatedUser = yield UserSchema_1.default.findByIdAndUpdate(userId, { $set: { isActive } }, { new: true });
-            if (!updatedUser) {
+            const userId = req.params.userId;
+            const user = yield UserSchema_1.default.findById(userId);
+            if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
                 return;
             }
-            res.status(200).json({ message: 'Statut de l\'utilisateur mis à jour avec succès', data: updatedUser });
+            user.isActive = !user.isActive;
+            yield user.save({ validateBeforeSave: false });
+            res.status(200).json(user);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
         }
     });
 }
+/**
+ * Supprime un utilisateur si aucune contrainte d'emprunt ou de possession de livre
+ */
 function deleteUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -175,6 +185,9 @@ function deleteUser(req, res) {
         }
     });
 }
+/**
+ * Ajoute un livre à la liste des livres réservés de l'utilisateur
+ */
 function addReservedBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -189,8 +202,7 @@ function addReservedBook(req, res) {
                 return;
             }
             // Vérifier que l'utilisateur ne peut réserver qu'une fois le livre
-            const existingBook = yield UserSchema_1.default.findOne({ _id: userId, bookReserved: bookId });
-            if (existingBook) {
+            if (user.bookReserved.includes(bookId)) {
                 res.status(400).json({ message: 'Le livre est déjà réservé par cet utilisateur' });
                 return;
             }
@@ -199,7 +211,6 @@ function addReservedBook(req, res) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            // Ajouter le livre à la liste des livres réservés de l'utilisateur
             user.bookReserved.push(bookId);
             yield user.save();
             res.status(200).json(user);
@@ -209,6 +220,9 @@ function addReservedBook(req, res) {
         }
     });
 }
+/**
+ * Ajoute un événement à la liste des événements réservés de l'utilisateur
+ */
 function addreservedEvent(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -217,18 +231,16 @@ function addreservedEvent(req, res) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
-            //Vérifier que l'utilisateur  ne peut réserver qu'une fois l'évènement
-            const existingEvent = yield UserSchema_1.default.findOne({ _id: userId, eventReserved: eventId });
-            if (existingEvent) {
-                res.status(400).json({ message: 'L\'événement est déjà réservé par cet utilisateur' });
-                return;
-            }
             const user = yield UserSchema_1.default.findById(userId);
             if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
                 return;
             }
-            // Ajouter l'événement à la liste des événements réservés de l'utilisateur
+            // Vérifier que l'utilisateur ne peut réserver qu'une fois l'évènement
+            if (user.eventReserved.includes(eventId)) {
+                res.status(400).json({ message: 'L\'événement est déjà réservé par cet utilisateur' });
+                return;
+            }
             user.eventReserved.push(eventId);
             yield user.save();
             res.status(200).json(user);
@@ -238,6 +250,9 @@ function addreservedEvent(req, res) {
         }
     });
 }
+/**
+ * Ajoute un livre à la liste des livres lus de l'utilisateur
+ */
 function addReadBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -246,18 +261,16 @@ function addReadBook(req, res) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
-            //Vérifier que l'utilisateur  ne peut réserver qu'une fois l'évènement
-            const existingBook = yield UserSchema_1.default.findOne({ _id: userId, booksRead: bookId });
-            if (existingBook) {
-                res.status(400).json({ message: 'Le livre lu ne peut pas s\'afficher deux fois' });
-                return;
-            }
             const user = yield UserSchema_1.default.findById(userId);
             if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
                 return;
             }
-            // Ajouter l'événement à la liste des événements réservés de l'utilisateur
+            // Vérifier que le livre n'est pas déjà dans la liste des livres lus
+            if (user.booksRead.includes(bookId)) {
+                res.status(400).json({ message: 'Le livre lu ne peut pas s\'afficher deux fois' });
+                return;
+            }
             user.booksRead.push(bookId);
             yield user.save();
             res.status(200).json(user);

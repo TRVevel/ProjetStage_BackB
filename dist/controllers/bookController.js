@@ -20,20 +20,28 @@ exports.addBook = addBook;
 exports.changeActiveStatus = changeActiveStatus;
 exports.updateBook = updateBook;
 exports.deleteBook = deleteBook;
+exports.reactivateBook = reactivateBook;
 const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const LoanSchema_1 = __importDefault(require("../DBSchemas/LoanSchema"));
+const mongoose_1 = require("mongoose");
+/**
+ * Récupère tous les livres
+ */
 function getAllBooks(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const books = yield BookSchema_1.default.find();
-            res.status(200).json({ message: 'Liste des livres', data: books });
+            res.status(200).json(books);
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
         }
     });
 }
+/**
+ * Récupère tous les livres actifs dont le propriétaire est actif
+ */
 function getAllBooksByActiveAndOwnerActive(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -45,6 +53,9 @@ function getAllBooksByActiveAndOwnerActive(req, res) {
         }
     });
 }
+/**
+ * Récupère un livre par son ID
+ */
 function getBookById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -65,6 +76,9 @@ function getBookById(req, res) {
         }
     });
 }
+/**
+ * Récupère les livres par code postal (département)
+ */
 function getBooksBypostalCode(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -93,23 +107,29 @@ function getBooksBypostalCode(req, res) {
         }
     });
 }
+/**
+ * Ajoute un nouveau livre pour l'utilisateur connecté
+ */
 function addBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { title, description, author, genre, publishedYear, language, state, imageCouverture, imageBack, imageInBook } = req.body;
+            // Vérification des champs obligatoires
             if (!title || !description || !author || !genre || !publishedYear || !language || !state || !imageCouverture || !imageBack || !imageInBook) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
-            // Parse the logged-in user's _id from the decoded token
+            // Récupération de l'utilisateur connecté
             const user = req.user;
             if (!user || !user._id) {
                 res.status(401).json({ message: 'Utilisateur non authentifié' });
                 return;
             }
             const owner = user._id;
+            // Création et sauvegarde du livre
             const newBook = new BookSchema_1.default({ title, description, author, genre, publishedYear, language, owner, state, imageCouverture, imageBack, imageInBook });
             const savedBook = yield newBook.save();
+            // Ajout du livre à la liste des livres possédés par l'utilisateur
             const userRecord = yield UserSchema_1.default.findById(owner);
             if (!userRecord) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -117,13 +137,16 @@ function addBook(req, res) {
             }
             userRecord.booksOwned.push(newBook._id);
             yield userRecord.save();
-            res.status(201).json({ message: 'livre crée avec succès', savedBook });
+            res.status(201).json({ message: 'Livre créé avec succès', savedBook });
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
         }
     });
 }
+/**
+ * Change le statut actif d'un livre
+ */
 function changeActiveStatus(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -145,6 +168,9 @@ function changeActiveStatus(req, res) {
         }
     });
 }
+/**
+ * Met à jour un livre existant
+ */
 function updateBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -154,7 +180,7 @@ function updateBook(req, res) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
-            const updatedBook = yield BookSchema_1.default.findByIdAndUpdate(bookId, { title, description, author, genre, publishedYear, language, owner }, { new: true });
+            const updatedBook = yield BookSchema_1.default.findByIdAndUpdate(bookId, { title, description, author, genre, publishedYear, language, owner, imageCouverture, imageInBook, imageBack }, { new: true });
             if (!updatedBook) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
@@ -167,6 +193,11 @@ function updateBook(req, res) {
         }
     });
 }
+/**
+ * Supprime un livre si aucune contrainte d'usage n'est présente
+ * - Si le livre est dans booksRead ou booksReserved d'un utilisateur, il est désactivé
+ * - Si le livre est dans un emprunt, il ne peut pas être supprimé
+ */
 function deleteBook(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -175,28 +206,62 @@ function deleteBook(req, res) {
                 res.status(400).json({ message: 'ID du livre requis' });
                 return;
             }
-            // Vérifier si le livre est présent dans le tableau booksRead de n'importe quel utilisateur
-            const usersWithBookRead = yield UserSchema_1.default.find({ booksRead: bookId });
-            if (usersWithBookRead.length > 0) {
-                res.status(400).json({ message: 'Le livre est encore marqué comme lu par des utilisateurs' });
+            const objectId = new mongoose_1.Types.ObjectId(bookId);
+            // Vérifier si le livre est dans booksRead ou booksReserved
+            const usersWithBookRead = yield UserSchema_1.default.find({ booksRead: objectId });
+            const usersWithBookReserved = yield UserSchema_1.default.find({ booksReserved: { $in: [objectId, bookId] } });
+            if (usersWithBookRead.length > 0 || usersWithBookReserved.length > 0) {
+                const updatedBook = yield BookSchema_1.default.findByIdAndUpdate(bookId, { $set: { isActive: false } }, { new: true });
+                res.status(200).json({ message: 'Livre marqué comme inactif', data: updatedBook });
                 return;
             }
-            // Vérifier si le livre est présent dans un emprunt
+            // Vérifier si le livre est dans un emprunt
             const loansWithBook = yield LoanSchema_1.default.find({ bookId });
             if (loansWithBook.length > 0) {
                 res.status(400).json({ message: 'Le livre est encore associé à des emprunts' });
                 return;
             }
-            // Supprimer le livre
+            // Suppression du livre
             const deletedBook = yield BookSchema_1.default.findByIdAndDelete(bookId);
             if (!deletedBook) {
                 res.status(404).json({ message: 'Livre non trouvé' });
                 return;
             }
-            res.status(200).json(deletedBook);
+            res.status(200).json({ message: "Livre effacé avec succès", deletedBook });
         }
         catch (err) {
             res.status(500).json({ message: 'Erreur interne', error: err.message });
+        }
+    });
+}
+/**
+ * Réactive un livre si aucune contrainte d'emprunt n'est présente
+ */
+function reactivateBook(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { bookId } = req.params;
+            if (!bookId) {
+                res.status(400).json({ message: 'ID du livre requis' });
+                return;
+            }
+            // Vérifie s’il est actuellement dans un emprunt actif
+            const loansWithBook = yield LoanSchema_1.default.find({ bookId });
+            if (loansWithBook.length > 0) {
+                res.status(400).json({ message: 'Impossible de réactiver : le livre est emprunté' });
+                return;
+            }
+            const updatedBook = yield BookSchema_1.default.findByIdAndUpdate(bookId, { $set: { isActive: true } }, { new: true });
+            if (!updatedBook) {
+                res.status(404).json({ message: 'Livre non trouvé' });
+                return;
+            }
+            res.status(200).json(updatedBook);
+            return;
+        }
+        catch (err) {
+            res.status(500).json({ message: 'Erreur interne', error: err.message });
+            return;
         }
     });
 }

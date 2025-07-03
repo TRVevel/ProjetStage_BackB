@@ -21,6 +21,9 @@ exports.bookReturned = bookReturned;
 const LoanSchema_1 = __importDefault(require("../DBSchemas/LoanSchema"));
 const UserSchema_1 = __importDefault(require("../DBSchemas/UserSchema"));
 const BookSchema_1 = __importDefault(require("../DBSchemas/BookSchema"));
+/**
+ * Récupère la liste de tous les emprunts
+ */
 function getAllLoans(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -32,12 +35,15 @@ function getAllLoans(req, res) {
         }
     });
 }
+/**
+ * Ajoute un nouvel emprunt pour l'utilisateur connecté
+ */
 function addLoan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { bookId } = req.params;
             const { startDate, endDate } = req.body;
-            const user = req.headers.user ? JSON.parse(req.headers.user) : null;
+            const user = req.user;
             if (!user || !user._id) {
                 res.status(401).json({ message: 'Utilisateur non authentifié' });
                 return;
@@ -47,15 +53,13 @@ function addLoan(req, res) {
                 res.status(400).json({ message: 'Champs manquant' });
                 return;
             }
-            // chercher si un loan avec 
-            // le meme user et pour le meme livre 
-            // n'est pas deja en pending ou confirm
+            // Vérifie qu'il n'y a pas déjà un emprunt en cours pour ce livre et cet utilisateur
             const existingLoan = yield LoanSchema_1.default.findOne({ userId, bookId, status: { $in: ['pending', 'confirmed'] } });
             if (existingLoan) {
                 res.status(400).json({ message: 'Un emprunt pour ce livre est déjà en cours' });
                 return;
             }
-            // chercher si le livre n'est pas deja emprunte
+            // Vérifie que le livre n'est pas déjà emprunté
             const book = yield BookSchema_1.default.findById(bookId).exec();
             if (!book) {
                 res.status(404).json({ message: 'Livre non trouvé' });
@@ -74,6 +78,9 @@ function addLoan(req, res) {
         }
     });
 }
+/**
+ * Met à jour un emprunt existant
+ */
 function updateLoan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -95,6 +102,9 @@ function updateLoan(req, res) {
         }
     });
 }
+/**
+ * Confirme un emprunt (status: "confirmed"), met à jour l'utilisateur et le livre associés
+ */
 function confirmLoan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -108,6 +118,7 @@ function confirmLoan(req, res) {
                 res.status(404).json({ message: 'Emprunt non trouvé' });
                 return;
             }
+            // Ajoute le livre à la liste des livres lus de l'utilisateur
             const user = yield UserSchema_1.default.findById(updatedLoan.userId).exec();
             if (!user) {
                 res.status(404).json({ message: 'Utilisateur non trouvé' });
@@ -115,6 +126,7 @@ function confirmLoan(req, res) {
             }
             user.booksRead.push(updatedLoan.bookId);
             yield user.save();
+            // Met à jour le livre comme emprunté et ajoute l'utilisateur à la liste des lecteurs
             const book = yield BookSchema_1.default.findById(updatedLoan.bookId).exec();
             if (!book) {
                 res.status(404).json({ message: 'Livre non trouvé' });
@@ -130,6 +142,9 @@ function confirmLoan(req, res) {
         }
     });
 }
+/**
+ * Annule un emprunt (suppression)
+ */
 function cancelLoan(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -150,6 +165,9 @@ function cancelLoan(req, res) {
         }
     });
 }
+/**
+ * Marque un emprunt comme retourné (status: "returned") et libère le livre
+ */
 function bookReturned(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -163,6 +181,7 @@ function bookReturned(req, res) {
                 res.status(404).json({ message: 'Emprunt non trouvé' });
                 return;
             }
+            // Libère le livre
             const book = yield BookSchema_1.default.findById(updatedLoan.bookId).exec();
             if (!book) {
                 res.status(404).json({ message: 'Livre non trouvé' });
